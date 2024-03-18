@@ -43,16 +43,37 @@
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 5px;
-            position: relative;
+            cursor: pointer;
         }
-        .editInput {
+        .modal {
             display: none;
-            width: 50px;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
-        .editButton {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -67,37 +88,98 @@
     <h2>Character List</h2>
     <ul id="characterList"></ul>
 
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Character</h2>
+            <form id="editCharacterForm">
+                <input type="text" id="editName" placeholder="Name" required>
+                <input type="number" id="editHealth" placeholder="Health" required>
+                <input type="number" id="editInitiative" placeholder="Initiative" required>
+                <input type="submit" value="Save Changes">
+            </form>
+        </div>
+    </div>
+
     <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on a character, open the modal
+        document.getElementById("characterList").addEventListener("click", function(event) {
+            var target = event.target.closest("li");
+            if (target) {
+                openModal(target);
+            }
+        });
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        };
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
+
         document.getElementById("characterForm").addEventListener("submit", function(event) {
             event.preventDefault();
             addCharacter();
         });
+
+        function openModal(characterListItem) {
+            modal.style.display = "block";
+            var name = characterListItem.dataset.name;
+            var health = characterListItem.dataset.health;
+            var initiative = characterListItem.dataset.initiative;
+
+            document.getElementById("editName").value = name;
+            document.getElementById("editHealth").value = health;
+            document.getElementById("editInitiative").value = initiative;
+
+            // Save changes when the form inside modal is submitted
+            document.getElementById("editCharacterForm").onsubmit = function(event) {
+                event.preventDefault();
+                saveChanges(characterListItem);
+            };
+        }
 
         function addCharacter() {
             var name = document.getElementById("name").value;
             var health = document.getElementById("health").value;
             var initiative = document.getElementById("initiative").value;
 
-            var character = {
-                name: name,
-                health: health,
-                initiative: initiative
-            };
-
             var characterList = document.getElementById("characterList");
 
             var listItem = document.createElement("li");
-            listItem.innerHTML = "Name: " + character.name + ", Health: <span class='health'>" + character.health + "</span>, Initiative: " + character.initiative + "<input type='number' class='editInput'>";
-            var editButton = document.createElement("button");
-            editButton.textContent = "Edit";
-            editButton.className = "editButton";
-            editButton.addEventListener("click", function() {
-                editHealth(listItem);
-            });
-            listItem.appendChild(editButton);
+            listItem.innerHTML = "Name: " + name + ", Health: " + health + ", Initiative: " + initiative;
+            listItem.dataset.name = name;
+            listItem.dataset.health = health;
+            listItem.dataset.initiative = initiative;
             characterList.appendChild(listItem);
 
             sortList();
+        }
+
+        function saveChanges(characterListItem) {
+            var name = document.getElementById("editName").value;
+            var health = document.getElementById("editHealth").value;
+            var initiative = document.getElementById("editInitiative").value;
+
+            characterListItem.innerHTML = "Name: " + name + ", Health: " + health + ", Initiative: " + initiative;
+            characterListItem.dataset.name = name;
+            characterListItem.dataset.health = health;
+            characterListItem.dataset.initiative = initiative;
+
+            sortList();
+            modal.style.display = "none";
         }
 
         function sortList() {
@@ -105,29 +187,14 @@
             var characters = Array.from(characterList.getElementsByTagName("li"));
 
             characters.sort(function(a, b) {
-                var initiativeA = parseInt(a.textContent.split(":")[3]);
-                var initiativeB = parseInt(b.textContent.split(":")[3]);
+                var initiativeA = parseInt(a.dataset.initiative);
+                var initiativeB = parseInt(b.dataset.initiative);
                 return initiativeB - initiativeA;
             });
 
             characterList.innerHTML = "";
             characters.forEach(function(character) {
                 characterList.appendChild(character);
-            });
-        }
-
-        function editHealth(characterItem) {
-            var healthSpan = characterItem.querySelector(".health");
-            var healthInput = characterItem.querySelector(".editInput");
-
-            healthInput.style.display = "inline-block";
-            healthInput.value = parseInt(healthSpan.textContent);
-            healthSpan.style.display = "none";
-
-            healthInput.addEventListener("blur", function() {
-                healthSpan.textContent = healthInput.value;
-                healthInput.style.display = "none";
-                healthSpan.style.display = "inline-block";
             });
         }
     </script>
