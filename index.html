@@ -18,7 +18,8 @@
             margin: 0 auto;
         }
         input[type="text"],
-        input[type="number"] {
+        input[type="number"],
+        textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -81,28 +82,34 @@
     </style>
 </head>
 <body>
-    <h1>Character Initiative Tracker</h1>
-    <form id="characterForm">
-        <input type="text" id="name" placeholder="Name" required>
-        <input type="number" id="health" placeholder="Health" required>
-        <input type="number" id="initiative" placeholder="Initiative" required>
-        <input type="submit" value="Add Character">
-    </form>
-    <h2>Character List</h2>
-    <ul id="characterList"></ul>
+    <div style="width: 40%; float:left">
+        <h1>Character Initiative Tracker</h1>
+        <form id="characterForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="number" id="health" placeholder="Health" required>
+            <input type="number" id="initiative" placeholder="Initiative" required>
+            <input type="text" id="notes" placeholder="Notes (optional)" optional>
+            <input type="submit" value="Add Character">
+        </form>
+     </div>
+     <div style="width: 60%; float:right">
+        <h2>Character List</h2>
+        <ul id="characterList"></ul>
+     </div>
 
     <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Edit Character</h2>
-            <form id="editForm">
-                <input type="text" id="editName" placeholder="Name" required>
-                <input type="number" id="editHealth" placeholder="Health" required>
-                <input type="number" id="editInitiative" placeholder="Initiative" required>
-                <input type="submit" value="Save Changes">
-            </form>
-        </div>
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Character</h2>
+        <form id="editForm">
+            <input type="text" id="editName" placeholder="Name" required>
+            <input type="number" id="editHealth" placeholder="Health" required>
+            <input type="number" id="editInitiative" placeholder="Initiative" required>
+            <input type="text" id="editNotes" placeholder="Notes (optional)" optional>
+            <input type="submit" value="Save Changes">
+        </form>
     </div>
+</div>
 
     <script>
         var modal = document.getElementById("myModal");
@@ -110,82 +117,92 @@
         var editNameInput = document.getElementById("editName");
         var editHealthInput = document.getElementById("editHealth");
         var editInitiativeInput = document.getElementById("editInitiative");
-
+        var editNotesInput = document.getElementById("editNotes");
+    
         var span = document.getElementsByClassName("close")[0];
         span.onclick = function() {
             modal.style.display = "none";
         }
-
+    
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
-
+    
         document.getElementById("characterForm").addEventListener("submit", function(event) {
             event.preventDefault();
             addCharacter();
         });
-
+    
         function addCharacter() {
             var name = document.getElementById("name").value;
             var health = document.getElementById("health").value;
             var initiative = document.getElementById("initiative").value;
-
+            var notes = document.getElementById("notes").value;
+    
             var character = {
                 name: name,
                 health: health,
-                initiative: initiative
+                initiative: initiative,
+                notes: notes
             };
-
+    
             var characterList = document.getElementById("characterList");
-
+    
             var listItem = document.createElement("li");
-            listItem.innerHTML = "Name: " + character.name + ", Health: " + character.health + ", Initiative: " + character.initiative;
+            listItem.innerHTML = "Name: " + character.name + ", Health: " + character.health + ", Initiative: " + character.initiative + ", Notes: " + character.notes;
             listItem.addEventListener("click", function() {
-                openModal(character, listItem);
+                openModal(character, listItem); // Pass listItem reference
             });
             characterList.appendChild(listItem);
-
+    
             document.getElementById("name").value = "";
             document.getElementById("health").value = "";
             document.getElementById("initiative").value = "";
-
+            document.getElementById("notes").value = "";
+    
             sortList();
         }
-
+    
         function openModal(character, listItem) {
             modal.style.display = "block";
             editNameInput.value = character.name;
             editHealthInput.value = character.health;
             editInitiativeInput.value = character.initiative;
+            editNotesInput.value = character.notes;
 
             editForm.onsubmit = function(event) {
                 event.preventDefault();
                 character.name = editNameInput.value;
                 character.health = editHealthInput.value;
                 character.initiative = editInitiativeInput.value;
+                character.notes = editNotesInput.value;
+
+                // Update the specific character's details in the list
+                listItem.innerHTML = "Name: " + character.name + ", Health: " + character.health + ", Initiative: " + character.initiative + ", Notes: " + character.notes;
+
                 modal.style.display = "none";
-                listItem.innerHTML = "Name: " + character.name + ", Health: " + character.health + ", Initiative: " + character.initiative;
-                sortList();
             };
         }
 
+    
         function sortList() {
             var characterList = document.getElementById("characterList");
             var characters = Array.from(characterList.getElementsByTagName("li"));
-
+    
             characters.sort(function(a, b) {
                 var initiativeA = parseInt(a.textContent.split(":")[3]);
                 var initiativeB = parseInt(b.textContent.split(":")[3]);
                 return initiativeB - initiativeA;
             });
-
+    
             characterList.innerHTML = "";
             characters.forEach(function(character) {
                 characterList.appendChild(character);
             });
         }
     </script>
+    
 </body>
 </html>
