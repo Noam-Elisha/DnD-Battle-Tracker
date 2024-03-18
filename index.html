@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Initiative Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Character Initiative Tracker</h1>
+    <form id="characterForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="number" id="health" placeholder="Health" required>
+        <input type="number" id="initiative" placeholder="Initiative" required>
+        <input type="submit" value="Add Character">
+    </form>
+    <h2>Character List</h2>
+    <ul id="characterList"></ul>
+
+    <script>
+        document.getElementById("characterForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            addCharacter();
+        });
+
+        function addCharacter() {
+            var name = document.getElementById("name").value;
+            var health = document.getElementById("health").value;
+            var initiative = document.getElementById("initiative").value;
+
+            var character = {
+                name: name,
+                health: health,
+                initiative: initiative
+            };
+
+            var characterList = document.getElementById("characterList");
+
+            var listItem = document.createElement("li");
+            listItem.textContent = "Name: " + character.name + ", Health: " + character.health + ", Initiative: " + character.initiative;
+            characterList.appendChild(listItem);
+
+            sortList();
+        }
+
+        function sortList() {
+            var characterList = document.getElementById("characterList");
+            var characters = Array.from(characterList.getElementsByTagName("li"));
+
+            characters.sort(function(a, b) {
+                var initiativeA = parseInt(a.textContent.split(":")[3]);
+                var initiativeB = parseInt(b.textContent.split(":")[3]);
+                return initiativeB - initiativeA;
+            });
+
+            characterList.innerHTML = "";
+            characters.forEach(function(character) {
+                characterList.appendChild(character);
+            });
+        }
+    </script>
+</body>
+</html>
