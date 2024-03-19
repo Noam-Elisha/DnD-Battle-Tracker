@@ -32,6 +32,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            font-size:large;
         }
         input[type="submit"]:hover {
             background-color: #45a049;
@@ -67,6 +68,10 @@
             width: 80%;
             max-width: 400px;
         }
+        .modalp {
+            margin-bottom: 4px;
+            margin-top: 1px;
+        }
         .close {
             color: #aaa;
             float: right;
@@ -80,6 +85,28 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .character {
+            border-radius: 8px;
+            border-width: 2px;
+            border-color:rgb(0, 0, 0);
+            border-style: solid;
+        }
+        .character:hover {
+            background-color: #88888840;
+            transition: background-color 100ms linear;
+        }
+        .details {
+            margin-left: 15px;
+        }
+        .delete {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            padding-right: 6px;
+        }
+
     </style>
 </head>
 <body>
@@ -103,9 +130,13 @@
         <span class="close">&times;</span>
         <h2>Edit Character</h2>
         <form id="editForm">
+            <p class="modalp">Name:</p>
             <input type="text" id="editName" placeholder="Name" required>
+            <p class="modalp">Health:</p>
             <input type="number" id="editHealth" placeholder="Health" required>
+            <p class="modalp">Initiative:</p>
             <input type="number" id="editInitiative" placeholder="Initiative" required>
+            <p class="modalp">Notes:</p>
             <input type="text" id="editNotes" placeholder="Notes (optional)" optional>
             <input type="submit" value="Save Changes">
         </form>
@@ -141,68 +172,88 @@
             var health = document.getElementById("health").value;
             var initiative = document.getElementById("initiative").value;
             var notes = document.getElementById("notes").value;
-    
-            var character = {
-                name: name,
-                health: health,
-                initiative: initiative,
-                notes: notes
-            };
-    
+
             var characterList = document.getElementById("characterList");
-    
-            var listItem = document.createElement("li");
-            listItem.innerHTML = character.name + " -  Initiative: " + character.initiative + ", Health: " + character.health + ", Notes: " + character.notes;
-            listItem.addEventListener("click", function() {
-                openModal(character, listItem); // Pass listItem reference
+
+            var characterDiv = document.createElement("div");
+            characterDiv.classList.add("character"); // Add a class for styling purposes
+
+            // Create and append the character's HTML structure
+            characterDiv.innerHTML = `
+                
+            <span class="delete">&times;</span>
+            <div class="details" style="display:flex">
+                <div style="flex:40%;">
+                    <h2>${name}:</h2>
+                    <p><strong>Health:</strong> ${health}</p>
+                    <p><strong>Initiative:</strong> ${initiative}</p>
+                </div>
+                <div style="flex:60%">
+                    <p><strong>Notes:</strong> ${notes}</p>
+                </div>
+            </div>
+            `;
+            characterDiv.addEventListener("click", function() {
+                openModal(name, health, initiative, notes, characterDiv);
             });
-            characterList.appendChild(listItem);
-    
+            characterDiv.innerHtml
+
+            characterList.appendChild(characterDiv);
+
+            // Clear input fields after adding the character
             document.getElementById("name").value = "";
             document.getElementById("health").value = "";
             document.getElementById("initiative").value = "";
             document.getElementById("notes").value = "";
-    
+
             sortList();
         }
     
-        function openModal(character, listItem) {
+        function openModal(name, health, initiative, notes, characterDiv) {
             modal.style.display = "block";
-            editNameInput.value = character.name;
-            editHealthInput.value = character.health;
-            editInitiativeInput.value = character.initiative;
-            editNotesInput.value = character.notes;
+            editNameInput.value = name;
+            editHealthInput.value = health;
+            editInitiativeInput.value = initiative;
+            editNotesInput.value = notes;
 
             editForm.onsubmit = function(event) {
                 event.preventDefault();
-                character.name = editNameInput.value;
-                character.health = editHealthInput.value;
-                character.initiative = editInitiativeInput.value;
-                character.notes = editNotesInput.value;
 
-                // Update the specific character's details in the list
-                listItem.innerHTML = character.name + " -  Initiative: " + character.initiative + ", Health: " + character.health + ", Notes: " + character.notes;
+                var newName = editNameInput.value;
+                var newHealth = editHealthInput.value;
+                var newInitiative = editInitiativeInput.value;
+                var newNotes = editNotesInput.value;
+
+                // Update the character's details in the characterDiv
+                characterDiv.querySelector("h2").innerText = newName + ":";
+                var details = characterDiv.querySelector(".details");
+                details.querySelectorAll("p")[0].innerHTML = "<strong>Health:</strong> " + newHealth;
+                details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative:</strong> " + newInitiative;
+                details.querySelectorAll("p")[2].innerHTML = "<strong>Notes:</strong> " + newNotes;
 
                 modal.style.display = "none";
+                sortList(); // Re-sort the list after editing
             };
         }
 
     
         function sortList() {
             var characterList = document.getElementById("characterList");
-            var characters = Array.from(characterList.getElementsByTagName("li"));
-    
+            var characters = Array.from(characterList.querySelectorAll('.character'));
+
             characters.sort(function(a, b) {
-                var initiativeA = parseInt(a.textContent.split(":")[3]);
-                var initiativeB = parseInt(b.textContent.split(":")[3]);
+                var initiativeA = parseInt(a.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
+                var initiativeB = parseInt(b.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
                 return initiativeB - initiativeA;
             });
-    
-            characterList.innerHTML = "";
+
+            characterList.innerHTML = ""; // Clear the list
+
+            // Append sorted characters back to the list
             characters.forEach(function(character) {
                 characterList.appendChild(character);
             });
-        }
+}
     </script>
     
 </body>
