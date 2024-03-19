@@ -41,6 +41,25 @@
             list-style-type: none;
             padding: 0;
         }
+        ul#characterList {
+            transition: opacity 0.2s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards; /* Adjust the duration and timing function as needed */
+            opacity: 0; /* Start with opacity 0 */
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        .fade-out {
+            animation: fadeOut 0.5s ease forwards; /* Adjust the duration and timing function as needed */
+        }
         li {
             border: 1px solid #ccc;
             padding: 10px;
@@ -195,7 +214,7 @@
             var characterList = document.getElementById("characterList");
 
             var characterDiv = document.createElement("li");
-            characterDiv.classList.add("character"); // Add a class for styling purposes
+            characterDiv.classList.add("character", "fade-in"); // Add a class for styling purposes
 
             // Create and append the character's HTML structure
             characterDiv.innerHTML = `
@@ -216,14 +235,15 @@
                 openModal(name, health, initiative, notes, characterDiv);
             });
             
-            var deleteBtn = characterDiv.querySelector('.delete');
-            deleteBtn.addEventListener("click", function(event) {
-                event.stopPropagation(); // Prevent event bubbling
-                characterDiv.remove(); // Remove the character from the list
-                sortList(); // Re-sort the list after deleting
+            characterDiv.querySelector(".delete").addEventListener("click", function(event) {
+                deleteCharacter(characterDiv, event);
             });
 
             characterList.appendChild(characterDiv);
+            // Trigger reflow to apply transition effect
+            characterDiv.offsetHeight;
+            // Set opacity to 1 to trigger fade-in effect
+            characterDiv.style.opacity = 1;
 
             // Clear input fields after adding the character
             document.getElementById("name").value = "";
@@ -232,6 +252,23 @@
             document.getElementById("notes").value = "";
 
             sortList();
+            // Trigger reflow to apply transition effect
+            characterDiv.offsetHeight;
+            // Set opacity to 1 to trigger fade-in effect
+            characterDiv.style.opacity = 1;
+        }
+
+        function deleteCharacter(characterDiv, event) {
+            // Prevent event bubbling
+            event.stopPropagation();
+
+            // Set opacity to 0 to trigger fade-out effect
+            characterDiv.classList.add("fade-out");
+            // Remove the characterDiv after the fade-out effect completes
+            characterDiv.addEventListener("animationend", function() {
+                // Remove the characterDiv from the DOM
+                characterDiv.parentNode.removeChild(characterDiv);
+            });
         }
     
         function openModal(name, health, initiative, notes, characterDiv) {
@@ -282,11 +319,10 @@
 
             characterList.innerHTML = ""; // Clear the list
 
-            // Append sorted characters back to the list
             characters.forEach(function(character) {
                 characterList.appendChild(character);
             });
-}
+        }
     </script>
     
 </body>
