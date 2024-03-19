@@ -58,6 +58,13 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.09s ease-in-out; /* Add transition for opacity */
+        }
+
+        .modal.show {
+            display: block;
+            opacity: 1;
         }
         .modal-content {
             background-color: #fefefe;
@@ -67,6 +74,11 @@
             border-radius: 10px;
             width: 80%;
             max-width: 400px;
+            opacity: 0;
+            transition: opacity 0.1s ease-in-out; /* Add transition for opacity */
+        }
+        .modal.show .modal-content {
+            opacity: 1;
         }
         .modalp {
             margin-bottom: 4px;
@@ -150,15 +162,22 @@
         var editHealthInput = document.getElementById("editHealth");
         var editInitiativeInput = document.getElementById("editInitiative");
         var editNotesInput = document.getElementById("editNotes");
+        var MODAL_TRANSITION_TIME = 100;
     
         var span = document.getElementsByClassName("close")[0];
         span.onclick = function() {
-            modal.style.display = "none";
+            modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
+            setTimeout(function() {
+                modal.style.display = "none"; // Hide the modal after the animation is complete
+            }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
         }
-    
+
         window.onclick = function(event) {
             if (event.target == modal) {
-                modal.style.display = "none";
+                modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
+                setTimeout(function() {
+                    modal.style.display = "none"; // Hide the modal after the animation is complete
+                }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
             }
         }
     
@@ -216,6 +235,10 @@
         }
     
         function openModal(name, health, initiative, notes, characterDiv) {
+            modal.style.display = "block"; // Display the modal
+            setTimeout(function() {
+                modal.classList.add("show"); // Add the 'show' class after a short delay to trigger the fade-in effect
+            }, MODAL_TRANSITION_TIME);
             modal.style.display = "block";
             editNameInput.value = name;
             editHealthInput.value = health;
@@ -237,12 +260,16 @@
                 details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative:</strong> " + newInitiative;
                 details.querySelectorAll("p")[2].innerHTML = "<strong>Notes:</strong> " + newNotes;
 
-                modal.style.display = "none";
+                modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
+                    setTimeout(function() {
+                        modal.style.display = "none"; // Hide the modal after the animation is complete
+                    }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
                 sortList(); // Re-sort the list after editing
             };
         }
 
-    
+        
+
         function sortList() {
             var characterList = document.getElementById("characterList");
             var characters = Array.from(characterList.querySelectorAll('.character'));
