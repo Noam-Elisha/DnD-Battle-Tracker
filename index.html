@@ -8,15 +8,22 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            height: 100%;
+            display:flex;
         }
+
         h1 {
             text-align: center;
+            font-size:3em;
         }
         form {
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
         }
+        input {
+            width: 35%;
+        }
+
         input[type="text"],
         input[type="number"],
         textarea {
@@ -24,6 +31,7 @@
             padding: 10px;
             margin-bottom: 10px;
             box-sizing: border-box;
+            
         }
         input[type="submit"] {
             width: 100%;
@@ -40,12 +48,16 @@
         ul {
             list-style-type: none;
             padding: 0;
-        }
-        ul#characterList {
-            transition: opacity 0.2s ease-in-out;
+            padding-right: 20px;
+            overflow:auto; 
+            height: calc(100vh - 100px);
+            margin-top:0px;
+            background-color: #f5f5f5b1;
+            padding-top: 10px;
+            padding-left: 15px;
         }
         .fade-in {
-            animation: fadeIn 0.5s ease forwards; /* Adjust the duration and timing function as needed */
+            animation: fadeIn .5s ease forwards; /* Adjust the duration and timing function as needed */
             opacity: 0; /* Start with opacity 0 */
         }
 
@@ -58,7 +70,7 @@
             100% { opacity: 0; }
         }
         .fade-out {
-            animation: fadeOut 0.5s ease forwards; /* Adjust the duration and timing function as needed */
+            animation: fadeOut 0.3s ease forwards; /* Adjust the duration and timing function as needed */
         }
         li {
             border: 1px solid #ccc;
@@ -66,6 +78,7 @@
             margin-bottom: 5px;
             position: relative;
             cursor: pointer;
+            
         }
         .modal {
             display: none;
@@ -138,10 +151,20 @@
             padding-right: 6px;
         }
 
+        h2#chars {
+            border-bottom: solid black 2px;;
+            background-color: #eff5f5a9;
+            margin:0px;
+            padding-top: 20px;
+            padding-bottom: 5px;
+        }
+
+        
+
     </style>
 </head>
 <body>
-    <div style="width: 40%; float:left">
+    <div style="width: 40%; float:left; overflow:hidden; background-color: #e6e6e6b1;">
         <h1>Character Initiative Tracker</h1>
         <form id="characterForm">
             <input type="text" id="name" placeholder="Name" required>
@@ -151,8 +174,8 @@
             <input type="submit" value="Add Character">
         </form>
      </div>
-     <div style="width: 60%; float:right">
-        <h2>Character List</h2>
+     <div style="width: 60%; float:right; overflow:hidden">
+        <h2 id="chars">Character List</h2>
         <ul id="characterList"></ul>
      </div>
 
@@ -191,12 +214,21 @@
             }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
         }
 
+        window.addEventListener("mouseup", function(event) {
+            if (!event.target.closest(".modal-content")) {
+                event.stopPropagation(); // Prevent further propagation of the event
+            }
+        });
+
         window.onclick = function(event) {
             if (event.target == modal) {
-                modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
-                setTimeout(function() {
-                    modal.style.display = "none"; // Hide the modal after the animation is complete
-                }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
+                // Check if the click target is the modal content or its children
+                if (!event.target.closest(".modal-content")) {
+                    modal.classList.remove("show");
+                    setTimeout(function() {
+                        modal.style.display = "none";
+                    }, MODAL_TRANSITION_TIME);
+                }
             }
         }
     
@@ -214,23 +246,26 @@
             var characterList = document.getElementById("characterList");
 
             var characterDiv = document.createElement("li");
-            characterDiv.classList.add("character", "fade-in"); // Add a class for styling purposes
+            characterDiv.classList.add("character", "fade-in"); // Add both classes
 
             // Create and append the character's HTML structure
             characterDiv.innerHTML = `
                 
             <span class="delete">&times;</span>
-            <div class="details" style="display:flex">
-                <div style="flex:40%;">
-                    <h2>${name}:</h2>
-                    <p><strong>Health:</strong> ${health}</p>
-                    <p><strong>Initiative:</strong> ${initiative}</p>
+            <div class="details" style="display:flex; font-size:1.15em;">
+                <div style="flex:50%;">
+                    <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h1>
+                    <p><strong class="chealth">Health:</strong> ${health}</p>
+                    <p><strong class="cinitiative">Initiative:</strong> ${initiative}</p>
                 </div>
-                <div style="flex:60%">
-                    <p><strong>Notes:</strong> ${notes}</p>
+                <div style="flex:50%">
+                    <p><strong class="cnotes">Notes:</strong> ${notes}</p>
                 </div>
             </div>
             `;
+            
+            characterList.insertBefore(characterDiv, characterList.firstChild);
+
             characterDiv.addEventListener("click", function() {
                 openModal(name, health, initiative, notes, characterDiv);
             });
@@ -238,13 +273,7 @@
             characterDiv.querySelector(".delete").addEventListener("click", function(event) {
                 deleteCharacter(characterDiv, event);
             });
-
-            characterList.appendChild(characterDiv);
-            // Trigger reflow to apply transition effect
-            characterDiv.offsetHeight;
-            // Set opacity to 1 to trigger fade-in effect
-            characterDiv.style.opacity = 1;
-
+            
             // Clear input fields after adding the character
             document.getElementById("name").value = "";
             document.getElementById("health").value = "";
@@ -252,10 +281,9 @@
             document.getElementById("notes").value = "";
 
             sortList();
-            // Trigger reflow to apply transition effect
-            characterDiv.offsetHeight;
-            // Set opacity to 1 to trigger fade-in effect
-            characterDiv.style.opacity = 1;
+            setTimeout(function() {
+                characterDiv.classList.remove("fade-in");
+            }, 300); // Adjust the delay as needed
         }
 
         function deleteCharacter(characterDiv, event) {
@@ -277,25 +305,27 @@
                 modal.classList.add("show"); // Add the 'show' class after a short delay to trigger the fade-in effect
             }, MODAL_TRANSITION_TIME);
             modal.style.display = "block";
-            editNameInput.value = name;
-            editHealthInput.value = health;
-            editInitiativeInput.value = initiative;
-            editNotesInput.value = notes;
+
+            //Fill form fields to character data
+            editNameInput.value = characterDiv.querySelector(".cname").innerHTML.slice(0, -1);
+            editHealthInput.value = characterDiv.querySelector(".chealth").nextSibling.textContent.trim();
+            editInitiativeInput.value = characterDiv.querySelector(".cinitiative").nextSibling.textContent.trim();
+            editNotesInput.value = characterDiv.querySelector(".cnotes").nextSibling.textContent.trim();
 
             editForm.onsubmit = function(event) {
                 event.preventDefault();
 
-                var newName = editNameInput.value;
-                var newHealth = editHealthInput.value;
-                var newInitiative = editInitiativeInput.value;
-                var newNotes = editNotesInput.value;
+                name = editNameInput.value;
+                health = editHealthInput.value;
+                initiative = editInitiativeInput.value;
+                notes = editNotesInput.value;
 
                 // Update the character's details in the characterDiv
-                characterDiv.querySelector("h2").innerText = newName + ":";
+                characterDiv.querySelector("h2").innerText = name + ":";
                 var details = characterDiv.querySelector(".details");
-                details.querySelectorAll("p")[0].innerHTML = "<strong>Health:</strong> " + newHealth;
-                details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative:</strong> " + newInitiative;
-                details.querySelectorAll("p")[2].innerHTML = "<strong>Notes:</strong> " + newNotes;
+                details.querySelectorAll("p")[0].innerHTML = "<strong>Health: </strong>" + health;
+                details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative: </strong>" + initiative;
+                details.querySelectorAll("p")[2].innerHTML = "<strong>Notes: </strong>" + notes;
 
                 modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
                     setTimeout(function() {
