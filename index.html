@@ -175,7 +175,7 @@
 
             var characterList = document.getElementById("characterList");
 
-            var characterDiv = document.createElement("div");
+            var characterDiv = document.createElement("li");
             characterDiv.classList.add("character"); // Add a class for styling purposes
 
             // Create and append the character's HTML structure
@@ -196,7 +196,13 @@
             characterDiv.addEventListener("click", function() {
                 openModal(name, health, initiative, notes, characterDiv);
             });
-            characterDiv.innerHtml
+            
+            var deleteBtn = characterDiv.querySelector('.delete');
+            deleteBtn.addEventListener("click", function(event) {
+                event.stopPropagation(); // Prevent event bubbling
+                characterDiv.remove(); // Remove the character from the list
+                sortList(); // Re-sort the list after deleting
+            });
 
             characterList.appendChild(characterDiv);
 
