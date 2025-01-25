@@ -194,30 +194,49 @@
             margin-top: 1px;
         }
 
-        .close {
+        .close, .delete {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--color-background-dark);
+            border: 1px solid var(--color-transparent-accent);
             color: var(--color-text-light);
-            float: right;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 32px;
-            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background-color: var(--color-transparent-dark);
-            transition: all 0.2s ease;
-            margin: -10px -10px 0 0;
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 0;
+            transition: background-color 0.2s ease;
+            padding: 0;
+            opacity: 0.8;
+            font-family: Arial, sans-serif;
         }
 
-        .close:hover,
-        .close:focus {
-            background-color: var(--color-accent);
-            color: white;
-            text-decoration: none;
-            cursor: pointer;
-            transform: rotate(90deg);
+        .close::after, .delete::after {
+            content: "×";
+            position: relative;
+            top: 1px;
+        }
+
+        .close:hover, .delete:hover {
+            background: var(--color-accent);
+            opacity: 1;
+        }
+
+        /* Specific positioning for modal close button */
+        .close {
+            right: 15px;
+            top: 15px;
+        }
+
+        /* Specific positioning for character card delete button */
+        .delete {
+            right: 10px;
+            top: 10px;
         }
 
         /* Style modal title */
@@ -308,29 +327,6 @@
             color: var(--color-text-light);
             font-weight: 600;
             letter-spacing: -0.3px;
-        }
-        .delete {
-            color: var(--color-text-light);
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background-color: var(--color-transparent-dark);
-            transition: all 0.2s ease;
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            opacity: 0.7;
-        }
-        .delete:hover {
-            background-color: var(--color-accent);
-            color: white;
-            opacity: 1;
         }
         h2#chars {
             border-bottom: none;
@@ -475,7 +471,7 @@
             border-radius: 8px;
             font-size: 16px;
             background: var(--color-transparent-dark);
-            color: var(--color-text-dark);
+            color: var(--color-text-filled);
             resize: vertical;
             transition: none !important;
             animation: none !important;
@@ -489,6 +485,7 @@
 
         #editNotes:focus {
             background: var(--color-input-focus);
+            color: var(--color-text-dark);
             border-color: var(--color-accent);
             box-shadow: 0 0 0 3px var(--color-transparent-shadow);
         }
@@ -518,6 +515,121 @@
             border-color: var(--color-accent);
             box-shadow: 0 0 0 3px var(--color-transparent-shadow);
         }
+
+        /* Add these media queries at the end of your existing styles */
+        @media screen and (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            div[style*="width: 40%"],
+            div[style*="width: 60%"] {
+                width: 100% !important;
+                float: none;
+                padding: 15px;
+            }
+
+            div[style*="width: 40%"] {
+                border-right: none;
+                border-bottom: 1px solid var(--color-transparent-accent);
+            }
+
+            .character {
+                margin: 10px 0;
+            }
+
+            .details {
+                flex-direction: column;
+                padding: 15px;
+                gap: 15px;
+            }
+
+            .details > div:first-child,
+            .details > div:last-child {
+                flex: 100%;
+                padding-right: 0;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+                padding: 15px;
+                max-height: 90vh;  /* Increased from 80vh */
+                margin-top: 5vh;   /* Reduced from 10% */
+            }
+
+            /* Make form elements in modal more compact */
+            .modal-content input,
+            .modal-content textarea {
+                margin-bottom: 10px;
+            }
+
+            .modal-content .modalp {
+                margin-bottom: 2px;
+                margin-top: 8px;
+            }
+
+            .modal-content h2 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            /* Adjust close button position */
+            .close {
+                margin: -5px -5px 0 0;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            .cname {
+                font-size: 1.5em !important;
+                padding-right: 40px;  /* Make room for delete button */
+            }
+
+            #characterForm {
+                padding: 15px;
+            }
+
+            ul {
+                padding: 15px;
+                height: auto;
+                max-height: calc(100vh - 400px);  /* Adjust based on your header height */
+            }
+
+            .delete {
+                width: 32px;
+                height: 32px;
+                right: 10px;
+                top: 10px;
+            }
+        }
+
+        /* Additional adjustments for very small screens */
+        @media screen and (max-width: 480px) {
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                padding: 8px;
+            }
+
+            .modal-content {
+                width: 90%;
+                margin: 3vh auto;
+                padding: 12px;
+                max-height: 94vh;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .details {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -538,7 +650,7 @@
 
     <div id="myModal" class="modal">
     <div class="modal-content">
-        <span class="close">&times;</span>
+        <span class="close"></span>
         <h2>Edit Character</h2>
         <form id="editForm">
             <p class="modalp">Name:</p>
@@ -604,10 +716,10 @@
             characterDiv.classList.add("character", "fade-in");
 
             characterDiv.innerHTML = `
-                <span class="delete">&times;</span>
+                <span class="delete"></span>
                 <div class="details" style="display:flex; font-size:1.15em;">
                     <div style="flex:50%;">
-                        <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h1>
+                        <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h2>
                         <p><strong class="chealth">Health:</strong> ${health}</p>
                         <p><strong class="cinitiative">Initiative:</strong> ${initiative}</p>
                     </div>
@@ -657,13 +769,20 @@
             setTimeout(function() {
                 modal.classList.add("show");
             }, MODAL_TRANSITION_TIME);
-            modal.style.display = "block";
 
-            //Fill form fields to character data
-            editNameInput.value = characterDiv.querySelector(".cname").innerHTML.slice(0, -1);
-            editHealthInput.value = characterDiv.querySelector(".chealth").nextSibling.textContent.trim();
-            editInitiativeInput.value = characterDiv.querySelector(".cinitiative").nextSibling.textContent.trim();
-            editNotesInput.value = characterDiv.querySelector(".cnotes").nextSibling.nextSibling.textContent.trim();
+            // Get all the values first
+            let nameText = characterDiv.querySelector(".cname").textContent.slice(0, -1);
+            let healthText = characterDiv.querySelector(".chealth").nextSibling.textContent.trim();
+            let initiativeText = characterDiv.querySelector(".cinitiative").nextSibling.textContent.trim();
+            let notesText = characterDiv.querySelector(".cnotes").parentElement.querySelector("span").textContent;
+
+            // Set the values with a small delay to ensure modal is ready
+            setTimeout(() => {
+                editNameInput.value = nameText;
+                editHealthInput.value = healthText;
+                editInitiativeInput.value = initiativeText;
+                editNotesInput.value = notesText;
+            }, 0);
 
             editForm.onsubmit = function(event) {
                 event.preventDefault();
@@ -676,9 +795,9 @@
                 // Update the character's details in the characterDiv
                 characterDiv.querySelector("h2").innerText = name + ":";
                 var details = characterDiv.querySelector(".details");
-                details.querySelectorAll("p")[0].innerHTML = "<strong>Health: </strong>" + health;
-                details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative: </strong>" + initiative;
-                details.querySelectorAll("p")[2].innerHTML = `<strong>Notes: </strong><br><span style="white-space: pre-wrap;">${notes}</span>`;
+                details.querySelectorAll("p")[0].innerHTML = "<strong class='chealth'>Health:</strong> " + health;
+                details.querySelectorAll("p")[1].innerHTML = "<strong class='cinitiative'>Initiative:</strong> " + initiative;
+                details.querySelectorAll("p")[2].innerHTML = "<strong class='cnotes'>Notes:</strong><br><span style='white-space: pre-wrap;'>" + notes + "</span>";
 
                 modal.classList.remove("show");
                 setTimeout(function() {
