@@ -10,13 +10,13 @@
             margin: 0;
             height: 100%;
             display: flex;
-            background: linear-gradient(135deg, #2a2522 0%, #332d2a 100%);
+            background: linear-gradient(135deg, #2c2019 0%, #3a2820 100%);
         }
 
         h1 {
             text-align: center;
             font-size: 2.5em;
-            color: #e8e6e3;
+            color: #e8d5b5;
             margin-bottom: 30px;
         }
         form {
@@ -34,26 +34,47 @@
             padding: 12px;
             margin-bottom: 15px;
             box-sizing: border-box;
-            border: 2px solid rgba(193, 88, 88, 0.2);
+            border: 2px solid rgba(139, 69, 19, 0.3);
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
-            background: rgba(47, 42, 39, 0.9);
-            color: #e8e6e3;
+            transition: all 0.3s ease;
+            background: rgba(44, 32, 25, 0.9);
+            color: #2c2019;
+        }
+
+        input[type="text"]:hover,
+        input[type="number"]:hover,
+        textarea:hover {
+            background: rgba(44, 32, 25, 0.95);
+            border-color: rgba(139, 69, 19, 0.5);
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus,
         textarea:focus {
-            border-color: #9b2c2c;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(155, 44, 44, 0.1);
+            background: #fff;
+            color: #2c2019;
+            border-color: #8b4513;
+            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+        }
+
+        /* Add these new rules for filled inputs */
+        input[type="text"]:not(:placeholder-shown),
+        input[type="number"]:not(:placeholder-shown),
+        textarea:not(:placeholder-shown) {
+            color: #f4ac68;
+        }
+
+        input[type="text"]:focus:not(:placeholder-shown),
+        input[type="number"]:focus:not(:placeholder-shown),
+        textarea:focus:not(:placeholder-shown) {
+            color: #2c2019;
         }
 
         input[type="submit"] {
             width: 100%;
             padding: 12px;
-            background-color: #9b2c2c;
+            background-color: #8b4513;
             color: white;
             border: none;
             border-radius: 8px;
@@ -64,7 +85,7 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #822727;
+            background-color: #a0522d;
         }
         ul {
             list-style-type: none;
@@ -108,7 +129,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(42, 37, 34, 0.75);
+            background-color: rgba(44, 32, 25, 0.75);
             opacity: 0;
             transition: opacity 0.09s ease-in-out;
         }
@@ -120,15 +141,15 @@
 
         .modal-content {
             position: relative;
-            background: linear-gradient(180deg, #332d2a 0%, #2f2a27 100%);
+            background: linear-gradient(180deg, #3a2820 0%, #2c2019 100%);
             margin: 10% auto;
             padding: 25px;
-            border: 1px solid rgba(193, 88, 88, 0.2);
+            border: 1px solid rgba(205, 140, 80, 0.2);
             border-radius: 16px;
             width: 90%;
             max-width: 500px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            color: #e8e6e3;
+            color: #e8d5b5;
         }
 
         .modal.show .modal-content {
@@ -141,7 +162,7 @@
         }
 
         .close {
-            color: #e8e6e3;
+            color: #e8d5b5;
             float: right;
             font-size: 24px;
             font-weight: bold;
@@ -152,14 +173,14 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: rgba(47, 42, 39, 0.8);
+            background-color: rgba(44, 32, 25, 0.8);
             transition: all 0.2s ease;
             margin: -10px -10px 0 0;
         }
 
         .close:hover,
         .close:focus {
-            background-color: #9b2c2c;
+            background-color: #8b4513;
             color: white;
             text-decoration: none;
             cursor: pointer;
@@ -168,14 +189,14 @@
 
         /* Style modal title */
         .modal-content h2 {
-            color: #e8e6e3;
+            color: #e8d5b5;
             font-size: 1.8em;
             margin-bottom: 20px;
             font-weight: 600;
             letter-spacing: -0.3px;
         }
         .character {
-            background: linear-gradient(180deg, #332d2a 0%, #2f2a27 100%);
+            background: linear-gradient(180deg, #3a2820 0%, #2c2019 100%);
             border-radius: 16px;
             border: none;
             box-shadow: 
@@ -183,7 +204,7 @@
                 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 16px;
             transition: all 0.3s ease;
-            color: #e8e6e3;
+            color: #e8d5b5;
             position: relative;
             overflow: hidden;
             padding: 5px;
@@ -198,20 +219,20 @@
             bottom: 8px;  /* Offset from bottom */
             width: 3px;
             border-radius: 2px;
-            background: linear-gradient(to bottom, #9b2c2caa, #63171744);
+            background: linear-gradient(to bottom, #cd8c50aa, #8b451344);
         }
 
         /* Adjust the accent colors for each card */
         .character:nth-child(3n)::after {
-            background: linear-gradient(to bottom, #9b2c2caa, #63171744);
+            background: linear-gradient(to bottom, #cd8c50aa, #8b451344);
         }
 
         .character:nth-child(3n+1)::after {
-            background: linear-gradient(to bottom, #822727aa, #541a1a44);
+            background: linear-gradient(to bottom, #a0522daa, #8b451344);
         }
 
         .character:nth-child(3n+2)::after {
-            background: linear-gradient(to bottom, #63171744, #451515aa);
+            background: linear-gradient(to bottom, #8b451344, #704214aa);
         }
 
         /* Remove the old border styles */
@@ -226,7 +247,7 @@
             box-shadow: 
                 0 4px 12px rgba(0,0,0,0.05),
                 0 8px 16px rgba(0,0,0,0.05);
-            background: linear-gradient(180deg, #3a332f 0%, #332d2a 100%);
+            background: linear-gradient(180deg, #4a332a 0%, #3a2820 100%);
         }
         .details {
             display: flex;
@@ -246,16 +267,17 @@
             margin: 6px 0;
             line-height: 1.6;
             letter-spacing: 0.2px;
+            color: #e8d5b5;
         }
         .cname {
             font-size: 1.8em !important;
             margin-bottom: 12px;
-            color: #e8e6e3;
+            color: #e8d5b5;
             font-weight: 600;
             letter-spacing: -0.3px;
         }
         .delete {
-            color: #e8e6e3;
+            color: #e8d5b5;
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
@@ -265,7 +287,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: rgba(47, 42, 39, 0.8);
+            background-color: rgba(44, 32, 25, 0.8);
             transition: all 0.2s ease;
             position: absolute;
             right: 15px;
@@ -273,14 +295,14 @@
             opacity: 0.7;
         }
         .delete:hover {
-            background-color: #9b2c2c;
+            background-color: #8b4513;
             color: white;
             opacity: 1;
         }
         h2#chars {
             border-bottom: none;
             background-color: transparent;
-            color: #e8e6e3;
+            color: #e8d5b5;
             font-size: 1.8em;
             margin: 0;
             padding: 20px 15px;
@@ -295,16 +317,16 @@
             right: 15px;
             height: 2px;
             background: linear-gradient(90deg, 
-                rgba(155, 44, 44, 0) 0%, 
-                rgba(155, 44, 44, 0.5) 50%, 
-                rgba(155, 44, 44, 0) 100%);
+                rgba(205, 140, 80, 0) 0%, 
+                rgba(205, 140, 80, 0.5) 50%, 
+                rgba(205, 140, 80, 0) 100%);
         }
         /* Left panel styling */
         div[style*="width: 40%"] {
-            background: linear-gradient(180deg, #2f2a27 0%, #2a2522 100%);
+            background: linear-gradient(180deg, #2c2019 0%, #241812 100%);
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
             padding: 30px;
-            border-right: 1px solid rgba(193, 88, 88, 0.2);
+            border-right: 1px solid rgba(205, 140, 80, 0.2);
             position: relative;
             overflow: hidden;
         }
@@ -355,7 +377,7 @@
             z-index: 1;
             text-align: center;
             font-size: 2.5em;
-            color: #e8e6e3;
+            color: #e8d5b5;
             margin-bottom: 30px;
             padding-bottom: 15px;
         }
@@ -368,22 +390,22 @@
             width: 100px;
             height: 3px;
             background: linear-gradient(90deg, 
-                rgba(155, 44, 44, 0) 0%, 
-                rgba(155, 44, 44, 0.5) 50%, 
-                rgba(155, 44, 44, 0) 100%);
+                rgba(205, 140, 80, 0) 0%, 
+                rgba(205, 140, 80, 0.5) 50%, 
+                rgba(205, 140, 80, 0) 100%);
         }
         input[type="text"],
         input[type="number"],
         textarea {
-            background: rgba(47, 42, 39, 0.9);
-            border: 2px solid rgba(193, 88, 88, 0.2);
+            background: rgba(44, 32, 25, 0.9);
+            border: 2px solid rgba(205, 140, 80, 0.2);
             transition: all 0.3s ease;
         }
         input[type="text"]:hover,
         input[type="number"]:hover,
         textarea:hover {
-            background: #3a332f;
-            border-color: rgba(193, 88, 88, 0.3);
+            background: #3a2820;
+            border-color: rgba(205, 140, 80, 0.3);
         }
         input[type="text"]:focus,
         input[type="number"]:focus,
@@ -398,12 +420,12 @@
         }
         /* Add placeholder color */
         ::placeholder {
-            color: #998f89;
+            color: #e8d5b5;
         }
         /* Style for strong tags */
         strong {
-            color: #c15858;
-            font-weight: 500;
+            color: #cd8c50;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -542,9 +564,9 @@
         }
     
         function openModal(name, health, initiative, notes, characterDiv) {
-            modal.style.display = "block"; // Display the modal
+            modal.style.display = "block";
             setTimeout(function() {
-                modal.classList.add("show"); // Add the 'show' class after a short delay to trigger the fade-in effect
+                modal.classList.add("show");
             }, MODAL_TRANSITION_TIME);
             modal.style.display = "block";
 
@@ -552,7 +574,7 @@
             editNameInput.value = characterDiv.querySelector(".cname").innerHTML.slice(0, -1);
             editHealthInput.value = characterDiv.querySelector(".chealth").nextSibling.textContent.trim();
             editInitiativeInput.value = characterDiv.querySelector(".cinitiative").nextSibling.textContent.trim();
-            editNotesInput.value = characterDiv.querySelector(".cnotes").nextSibling.textContent.trim();
+            editNotesInput.value = characterDiv.querySelector(".cnotes").nextSibling.nextSibling.textContent.trim();
 
             editForm.onsubmit = function(event) {
                 event.preventDefault();
