@@ -67,9 +67,10 @@
             border: 2px solid var(--color-transparent-accent);
             border-radius: 8px;
             font-size: 16px;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
             background: var(--color-transparent-dark);
             color: var(--color-text-dark);
+            resize: vertical;
         }
 
         input[type="text"]:hover,
@@ -158,10 +159,10 @@
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
             background-color: var(--color-transparent-dark);
             opacity: 0;
             transition: opacity 0.09s ease-in-out;
+            overflow: hidden;
         }
 
         .modal.show {
@@ -180,6 +181,8 @@
             max-width: 500px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             color: var(--color-text-light);
+            overflow-y: auto;
+            max-height: 80vh;
         }
 
         .modal.show .modal-content {
@@ -460,6 +463,61 @@
         textarea:focus::placeholder {
             color: var(--color-placeholder-focus);
         }
+        #editForm {
+            overflow: visible;
+        }
+        #editNotes {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 2px solid var(--color-transparent-accent);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--color-transparent-dark);
+            color: var(--color-text-dark);
+            resize: vertical;
+            transition: none !important;
+            animation: none !important;
+            will-change: height;
+        }
+
+        #editNotes:hover {
+            background: var(--color-transparent-darker);
+            border-color: var(--color-transparent-accent-hover);
+        }
+
+        #editNotes:focus {
+            background: var(--color-input-focus);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
+        }
+        #notes {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 2px solid var(--color-transparent-accent);
+            border-radius: 8px;
+            font-size: 16px;
+            background: var(--color-transparent-dark);
+            color: var(--color-text-dark);
+            resize: vertical;
+            transition: none !important;
+            animation: none !important;
+            will-change: height;
+        }
+
+        #notes:hover {
+            background: var(--color-transparent-darker);
+            border-color: var(--color-transparent-accent-hover);
+        }
+
+        #notes:focus {
+            background: var(--color-input-focus);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
+        }
     </style>
 </head>
 <body>
@@ -507,29 +565,27 @@
     
         var span = document.getElementsByClassName("close")[0];
         span.onclick = function() {
-            modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
+            modal.classList.remove("show");
             setTimeout(function() {
-                modal.style.display = "none"; // Hide the modal after the animation is complete
-            }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
+                modal.style.display = "none";
+            }, MODAL_TRANSITION_TIME);
         }
 
-        window.addEventListener("mouseup", function(event) {
-            if (!event.target.closest(".modal-content")) {
-                event.stopPropagation(); // Prevent further propagation of the event
-            }
+        // Track where the click started
+        let clickStartedOutsideModal = false;
+
+        window.addEventListener("mousedown", function(event) {
+            clickStartedOutsideModal = event.target === modal;
         });
 
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                // Check if the click target is the modal content or its children
-                if (!event.target.closest(".modal-content")) {
-                    modal.classList.remove("show");
-                    setTimeout(function() {
-                        modal.style.display = "none";
-                    }, MODAL_TRANSITION_TIME);
-                }
+        window.addEventListener("click", function(event) {
+            if (event.target === modal && clickStartedOutsideModal) {
+                modal.classList.remove("show");
+                setTimeout(function() {
+                    modal.style.display = "none";
+                }, MODAL_TRANSITION_TIME);
             }
-        }
+        });
     
         document.getElementById("characterForm").addEventListener("submit", function(event) {
             event.preventDefault();
