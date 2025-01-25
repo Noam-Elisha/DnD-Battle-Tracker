@@ -5,18 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Character Initiative Tracker</title>
     <style>
+        :root {
+            /* Primary Colors */
+            --color-background-dark: #2c2019;
+            --color-background-darker: #241812;
+            --color-background-light: #3a2820;
+            --color-background-lighter: #4a332a;
+            
+            /* Text Colors */
+            --color-text-light: #e8d5b5;
+            --color-text-dark: #2c2019;
+            --color-text-filled: #cd8c50;
+            
+            /* Accent Colors */
+            --color-accent: #8b4513;
+            --color-accent-light: #a0522d;
+            --color-accent-lighter: #cd8c50;
+            
+            /* Transparency Colors */
+            --color-transparent-dark: rgba(44, 32, 25, 0.9);
+            --color-transparent-darker: rgba(44, 32, 25, 0.95);
+            --color-transparent-accent: rgba(139, 69, 19, 0.3);
+            --color-transparent-accent-hover: rgba(139, 69, 19, 0.5);
+            --color-transparent-shadow: rgba(139, 69, 19, 0.2);
+            --color-form-background: rgba(232, 213, 181, 0.05);
+            
+            /* Input Colors */
+            --color-input-focus: #e8d5b5;
+            --color-placeholder-focus: #2c2019;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             height: 100%;
             display: flex;
-            background: linear-gradient(135deg, #2c2019 0%, #3a2820 100%);
+            background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
         }
 
         h1 {
             text-align: center;
             font-size: 2.5em;
-            color: #e8d5b5;
+            color: var(--color-text-light);
             margin-bottom: 30px;
         }
         form {
@@ -34,47 +64,47 @@
             padding: 12px;
             margin-bottom: 15px;
             box-sizing: border-box;
-            border: 2px solid rgba(139, 69, 19, 0.3);
+            border: 2px solid var(--color-transparent-accent);
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
-            background: rgba(44, 32, 25, 0.9);
-            color: #2c2019;
+            background: var(--color-transparent-dark);
+            color: var(--color-text-dark);
         }
 
         input[type="text"]:hover,
         input[type="number"]:hover,
         textarea:hover {
-            background: rgba(44, 32, 25, 0.95);
-            border-color: rgba(139, 69, 19, 0.5);
+            background: var(--color-transparent-darker);
+            border-color: var(--color-transparent-accent-hover);
         }
 
+        /* Combined all focus states into one rule */
         input[type="text"]:focus,
         input[type="number"]:focus,
-        textarea:focus {
-            background: #fff;
-            color: #2c2019;
-            border-color: #8b4513;
-            box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
-        }
-
-        /* Add these new rules for filled inputs */
-        input[type="text"]:not(:placeholder-shown),
-        input[type="number"]:not(:placeholder-shown),
-        textarea:not(:placeholder-shown) {
-            color: #f4ac68;
-        }
-
+        textarea:focus,
+        input[type="text"]:focus:placeholder-shown,
+        input[type="number"]:focus:placeholder-shown,
+        textarea:focus:placeholder-shown,
         input[type="text"]:focus:not(:placeholder-shown),
         input[type="number"]:focus:not(:placeholder-shown),
         textarea:focus:not(:placeholder-shown) {
-            color: #2c2019;
+            background: var(--color-input-focus);
+            color: var(--color-text-dark);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
+        }
+
+        input[type="text"]:not(:placeholder-shown),
+        input[type="number"]:not(:placeholder-shown),
+        textarea:not(:placeholder-shown) {
+            color: var(--color-text-filled);
         }
 
         input[type="submit"] {
             width: 100%;
             padding: 12px;
-            background-color: #8b4513;
+            background-color: var(--color-accent);
             color: white;
             border: none;
             border-radius: 8px;
@@ -85,7 +115,7 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #a0522d;
+            background-color: var(--color-accent-light);
         }
         ul {
             list-style-type: none;
@@ -129,7 +159,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(44, 32, 25, 0.75);
+            background-color: var(--color-transparent-dark);
             opacity: 0;
             transition: opacity 0.09s ease-in-out;
         }
@@ -141,15 +171,15 @@
 
         .modal-content {
             position: relative;
-            background: linear-gradient(180deg, #3a2820 0%, #2c2019 100%);
+            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
             margin: 10% auto;
             padding: 25px;
-            border: 1px solid rgba(205, 140, 80, 0.2);
+            border: 1px solid var(--color-transparent-accent);
             border-radius: 16px;
             width: 90%;
             max-width: 500px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            color: #e8d5b5;
+            color: var(--color-text-light);
         }
 
         .modal.show .modal-content {
@@ -162,7 +192,7 @@
         }
 
         .close {
-            color: #e8d5b5;
+            color: var(--color-text-light);
             float: right;
             font-size: 24px;
             font-weight: bold;
@@ -173,14 +203,14 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: rgba(44, 32, 25, 0.8);
+            background-color: var(--color-transparent-dark);
             transition: all 0.2s ease;
             margin: -10px -10px 0 0;
         }
 
         .close:hover,
         .close:focus {
-            background-color: #8b4513;
+            background-color: var(--color-accent);
             color: white;
             text-decoration: none;
             cursor: pointer;
@@ -189,14 +219,14 @@
 
         /* Style modal title */
         .modal-content h2 {
-            color: #e8d5b5;
+            color: var(--color-text-light);
             font-size: 1.8em;
             margin-bottom: 20px;
             font-weight: 600;
             letter-spacing: -0.3px;
         }
         .character {
-            background: linear-gradient(180deg, #3a2820 0%, #2c2019 100%);
+            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
             border-radius: 16px;
             border: none;
             box-shadow: 
@@ -204,7 +234,7 @@
                 0 4px 8px rgba(0,0,0,0.1);
             margin-bottom: 16px;
             transition: all 0.3s ease;
-            color: #e8d5b5;
+            color: var(--color-text-light);
             position: relative;
             overflow: hidden;
             padding: 5px;
@@ -219,20 +249,20 @@
             bottom: 8px;  /* Offset from bottom */
             width: 3px;
             border-radius: 2px;
-            background: linear-gradient(to bottom, #cd8c50aa, #8b451344);
+            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
         }
 
         /* Adjust the accent colors for each card */
         .character:nth-child(3n)::after {
-            background: linear-gradient(to bottom, #cd8c50aa, #8b451344);
+            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
         }
 
         .character:nth-child(3n+1)::after {
-            background: linear-gradient(to bottom, #a0522daa, #8b451344);
+            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
         }
 
         .character:nth-child(3n+2)::after {
-            background: linear-gradient(to bottom, #8b451344, #704214aa);
+            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
         }
 
         /* Remove the old border styles */
@@ -247,7 +277,7 @@
             box-shadow: 
                 0 4px 12px rgba(0,0,0,0.05),
                 0 8px 16px rgba(0,0,0,0.05);
-            background: linear-gradient(180deg, #4a332a 0%, #3a2820 100%);
+            background: linear-gradient(180deg, var(--color-background-lighter) 0%, var(--color-background-light) 100%);
         }
         .details {
             display: flex;
@@ -267,17 +297,17 @@
             margin: 6px 0;
             line-height: 1.6;
             letter-spacing: 0.2px;
-            color: #e8d5b5;
+            color: var(--color-text-light);
         }
         .cname {
             font-size: 1.8em !important;
             margin-bottom: 12px;
-            color: #e8d5b5;
+            color: var(--color-text-light);
             font-weight: 600;
             letter-spacing: -0.3px;
         }
         .delete {
-            color: #e8d5b5;
+            color: var(--color-text-light);
             font-size: 24px;
             font-weight: bold;
             cursor: pointer;
@@ -287,7 +317,7 @@
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            background-color: rgba(44, 32, 25, 0.8);
+            background-color: var(--color-transparent-dark);
             transition: all 0.2s ease;
             position: absolute;
             right: 15px;
@@ -295,14 +325,14 @@
             opacity: 0.7;
         }
         .delete:hover {
-            background-color: #8b4513;
+            background-color: var(--color-accent);
             color: white;
             opacity: 1;
         }
         h2#chars {
             border-bottom: none;
             background-color: transparent;
-            color: #e8d5b5;
+            color: var(--color-text-light);
             font-size: 1.8em;
             margin: 0;
             padding: 20px 15px;
@@ -323,10 +353,10 @@
         }
         /* Left panel styling */
         div[style*="width: 40%"] {
-            background: linear-gradient(180deg, #2c2019 0%, #241812 100%);
+            background: linear-gradient(180deg, var(--color-background-dark) 0%, var(--color-background-darker) 100%);
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
             padding: 30px;
-            border-right: 1px solid rgba(205, 140, 80, 0.2);
+            border-right: 1px solid var(--color-transparent-accent);
             position: relative;
             overflow: hidden;
         }
@@ -362,22 +392,20 @@
         #characterForm {
             position: relative;
             z-index: 1;
-            background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.9) 0%, 
-                rgba(248, 250, 252, 0.9) 100%);
+            background: var(--color-form-background);
             padding: 25px;
             border-radius: 16px;
             box-shadow: 
-                0 4px 6px rgba(66, 153, 225, 0.05),
+                0 4px 6px rgba(0, 0, 0, 0.05),
                 0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(99, 179, 237, 0.1);
+            border: 1px solid var(--color-transparent-accent);
         }
         h1 {
             position: relative;
             z-index: 1;
             text-align: center;
             font-size: 2.5em;
-            color: #e8d5b5;
+            color: var(--color-text-light);
             margin-bottom: 30px;
             padding-bottom: 15px;
         }
@@ -397,40 +425,45 @@
         input[type="text"],
         input[type="number"],
         textarea {
-            background: rgba(44, 32, 25, 0.9);
-            border: 2px solid rgba(205, 140, 80, 0.2);
+            background: var(--color-transparent-dark);
+            border: 2px solid var(--color-transparent-accent);
             transition: all 0.3s ease;
         }
         input[type="text"]:hover,
         input[type="number"]:hover,
         textarea:hover {
-            background: #3a2820;
-            border-color: rgba(205, 140, 80, 0.3);
+            background: var(--color-transparent-darker);
+            border-color: var(--color-transparent-accent-hover);
         }
         input[type="text"]:focus,
         input[type="number"]:focus,
         textarea:focus {
             background: #ffffff;
-            border-color: #4299e1;
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
         }
         /* Right panel styling */
         div[style*="width: 60%"] {
-            background: linear-gradient(135deg, #2a2522 0%, #332d2a 100%);
+            background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
         }
         /* Add placeholder color */
         ::placeholder {
-            color: #e8d5b5;
+            color: var(--color-text-light);
         }
         /* Style for strong tags */
         strong {
-            color: #cd8c50;
+            color: var(--color-accent-lighter);
             font-weight: 600;
+        }
+        input[type="text"]:focus::placeholder,
+        input[type="number"]:focus::placeholder,
+        textarea:focus::placeholder {
+            color: var(--color-placeholder-focus);
         }
     </style>
 </head>
 <body>
-    <div style="width: 40%; float:left; overflow:hidden; background-color: #c5c5c58a;">
+    <div style="width: 40%; float:left; overflow:hidden;">
         <h1>Character Initiative Tracker</h1>
         <form id="characterForm">
             <input type="text" id="name" placeholder="Name" required>
