@@ -6,15 +6,18 @@
     <title>Character Initiative Tracker</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             height: 100%;
-            display:flex;
+            display: flex;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
         }
 
         h1 {
             text-align: center;
-            font-size:3em;
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 30px;
         }
         form {
             max-width: 500px;
@@ -28,33 +31,48 @@
         input[type="number"],
         textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             box-sizing: border-box;
-            
+            border: 2px solid #e8ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            background: linear-gradient(180deg, #ffffff 0%, #fafcfb 100%);
+            color: #2c3e50;
         }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            border-color: #4299e1;
+            outline: none;
+        }
+
         input[type="submit"] {
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 12px;
+            background-color: #4299e1;
             color: white;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
-            font-size:large;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
         }
+
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #3182ce;
         }
         ul {
             list-style-type: none;
-            padding: 0;
-            padding-right: 20px;
-            overflow:auto; 
+            padding: 25px;
+            padding-right: 25px;
+            overflow: auto; 
             height: calc(100vh - 100px);
-            margin-top:0px;
-            background-color: #f5f5f5b1;
-            padding-top: 10px;
-            padding-left: 15px;
+            margin-top: 0px;
+            background-color: transparent;
         }
         .fade-in {
             animation: fadeIn .5s ease forwards; /* Adjust the duration and timing function as needed */
@@ -89,79 +107,302 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(44, 62, 80, 0.6);
             opacity: 0;
-            transition: opacity 0.09s ease-in-out; /* Add transition for opacity */
+            transition: opacity 0.09s ease-in-out;
         }
 
         .modal.show {
             display: block;
             opacity: 1;
         }
+
         .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 400px;
-            opacity: 0;
-            transition: opacity 0.1s ease-in-out; /* Add transition for opacity */
+            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            color: #2c3e50;
         }
+
         .modal.show .modal-content {
             opacity: 1;
         }
+
         .modalp {
             margin-bottom: 4px;
             margin-top: 1px;
         }
+
         .close {
-            color: #aaa;
+            color: #2c3e50;
             float: right;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f5f7f6;
+            transition: all 0.2s ease;
+            margin: -10px -10px 0 0;
         }
+
         .close:hover,
         .close:focus {
-            color: black;
+            background-color: #e74c3c;
+            color: white;
             text-decoration: none;
             cursor: pointer;
+            transform: rotate(90deg);
+        }
+
+        /* Style modal title */
+        .modal-content h2 {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
         }
         .character {
-            border-radius: 8px;
-            border-width: 2px;
-            border-color:rgb(0, 0, 0);
-            border-style: solid;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 16px;
+            border: none;
+            box-shadow: 
+                0 2px 4px rgba(0,0,0,0.02),
+                0 4px 8px rgba(0,0,0,0.02);
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            color: #2c3e50;
+            position: relative;
+            overflow: hidden;
+            padding: 5px;
         }
+
+        /* Replace the border-left with a pseudo-element */
+        .character::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;  /* Offset from top */
+            bottom: 8px;  /* Offset from bottom */
+            width: 3px;
+            border-radius: 2px;
+        }
+
+        /* Adjust the accent colors for each card */
+        .character:nth-child(3n)::after {
+            background: linear-gradient(to bottom, #4299e1aa, #90cdf444);
+        }
+
+        .character:nth-child(3n+1)::after {
+            background: linear-gradient(to bottom, #3182ceaa, #63b3ed44);
+        }
+
+        .character:nth-child(3n+2)::after {
+            background: linear-gradient(to bottom, #2b6cb0aa, #4299e144);
+        }
+
+        /* Remove the old border styles */
+        .character:nth-child(3n),
+        .character:nth-child(3n+1),
+        .character:nth-child(3n+2) {
+            border-left: none;
+        }
+
         .character:hover {
-            background-color: #88888840;
-            transition: background-color 100ms linear;
+            transform: translateY(-2px) translateX(2px);
+            box-shadow: 
+                0 4px 12px rgba(0,0,0,0.05),
+                0 8px 16px rgba(0,0,0,0.05);
+            background: linear-gradient(180deg, #ffffff 0%, #f0f4f8 100%);
         }
         .details {
-            margin-left: 15px;
+            display: flex;
+            font-size: 1.15em;
+            padding: 20px 25px;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .details > div:first-child {
+            flex: 35%;
+        }
+        .details > div:last-child {
+            flex: 65%;
+            padding-right: 40px;
+        }
+        .details p {
+            margin: 6px 0;
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+        .cname {
+            font-size: 1.8em !important;
+            margin-bottom: 12px;
+            color: #2d3748;
+            font-weight: 600;
+            letter-spacing: -0.3px;
         }
         .delete {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
+            color: #2c3e50;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            padding-right: 6px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(245, 247, 246, 0.8);
+            transition: all 0.2s ease;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            opacity: 0.7;
         }
-
+        .delete:hover {
+            background-color: #f56565;
+            color: white;
+            opacity: 1;
+        }
         h2#chars {
-            border-bottom: solid black 2px;;
-            background-color: #f8f8f8a9;
-            margin:0px;
-            padding-top: 20px;
-            padding-bottom: 5px;
-            padding-left: 15px;
+            border-bottom: none;
+            background-color: transparent;
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin: 0;
+            padding: 20px 15px;
+            position: relative;
+            padding-bottom: 10px;
         }
-
-        
-
+        h2#chars::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(66, 153, 225, 0) 0%, 
+                rgba(66, 153, 225, 0.5) 50%, 
+                rgba(66, 153, 225, 0) 100%);
+        }
+        /* Left panel styling */
+        div[style*="width: 40%"] {
+            background: linear-gradient(180deg, #f8fafc 0%, #f0f4f8 100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            padding: 30px;
+            border-right: 1px solid rgba(99, 179, 237, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        /* Add subtle pattern to left panel */
+        div[style*="width: 40%"]::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(135deg, 
+                rgba(66, 153, 225, 0.05) 0%, 
+                rgba(99, 179, 237, 0.05) 100%);
+            border-bottom-right-radius: 50%;
+            border-bottom-left-radius: 50%;
+        }
+        /* Add bottom decoration */
+        div[style*="width: 40%"]::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(135deg, 
+                rgba(66, 153, 225, 0.03) 0%, 
+                rgba(99, 179, 237, 0.03) 100%);
+            border-top-right-radius: 50%;
+            border-top-left-radius: 50%;
+        }
+        /* Form container */
+        #characterForm {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.9) 0%, 
+                rgba(248, 250, 252, 0.9) 100%);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px rgba(66, 153, 225, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(99, 179, 237, 0.1);
+        }
+        h1 {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            font-size: 2.5em;
+            color: #2d3748;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+        }
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                rgba(66, 153, 225, 0) 0%, 
+                rgba(66, 153, 225, 0.5) 50%, 
+                rgba(66, 153, 225, 0) 100%);
+        }
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(99, 179, 237, 0.2);
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:hover,
+        input[type="number"]:hover,
+        textarea:hover {
+            background: #ffffff;
+            border-color: rgba(99, 179, 237, 0.3);
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            background: #ffffff;
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+        }
+        /* Right panel styling */
+        div[style*="width: 60%"] {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e6edf4 100%);
+        }
+        /* Add placeholder color */
+        ::placeholder {
+            color: #95a5a6;
+        }
+        /* Style for strong tags */
+        strong {
+            color: #3182ce;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -171,7 +412,7 @@
             <input type="text" id="name" placeholder="Name" required>
             <input type="number" id="health" placeholder="Health" required>
             <input type="number" id="initiative" placeholder="Initiative" required>
-            <input type="text" id="notes" placeholder="Notes (optional)" optional>
+            <textarea id="notes" placeholder="Notes (optional)" rows="3"></textarea>
             <input type="submit" value="Add Character">
         </form>
      </div>
@@ -192,7 +433,7 @@
             <p class="modalp">Initiative:</p>
             <input type="number" id="editInitiative" placeholder="Initiative" required>
             <p class="modalp">Notes:</p>
-            <input type="text" id="editNotes" placeholder="Notes (optional)" optional>
+            <textarea id="editNotes" placeholder="Notes (optional)" rows="3"></textarea>
             <input type="submit" value="Save Changes">
         </form>
     </div>
@@ -247,22 +488,20 @@
             var characterList = document.getElementById("characterList");
 
             var characterDiv = document.createElement("li");
-            characterDiv.classList.add("character", "fade-in"); // Add both classes
+            characterDiv.classList.add("character", "fade-in");
 
-            // Create and append the character's HTML structure
             characterDiv.innerHTML = `
-                
-            <span class="delete">&times;</span>
-            <div class="details" style="display:flex; font-size:1.15em;">
-                <div style="flex:50%;">
-                    <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h1>
-                    <p><strong class="chealth">Health:</strong> ${health}</p>
-                    <p><strong class="cinitiative">Initiative:</strong> ${initiative}</p>
+                <span class="delete">&times;</span>
+                <div class="details" style="display:flex; font-size:1.15em;">
+                    <div style="flex:50%;">
+                        <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h1>
+                        <p><strong class="chealth">Health:</strong> ${health}</p>
+                        <p><strong class="cinitiative">Initiative:</strong> ${initiative}</p>
+                    </div>
+                    <div style="flex:50%">
+                        <p><strong class="cnotes">Notes:</strong><br><span style="white-space: pre-wrap;">${notes}</span></p>
+                    </div>
                 </div>
-                <div style="flex:50%">
-                    <p><strong class="cnotes">Notes:</strong> ${notes}</p>
-                </div>
-            </div>
             `;
             
             characterList.insertBefore(characterDiv, characterList.firstChild);
@@ -326,13 +565,13 @@
                 var details = characterDiv.querySelector(".details");
                 details.querySelectorAll("p")[0].innerHTML = "<strong>Health: </strong>" + health;
                 details.querySelectorAll("p")[1].innerHTML = "<strong>Initiative: </strong>" + initiative;
-                details.querySelectorAll("p")[2].innerHTML = "<strong>Notes: </strong>" + notes;
+                details.querySelectorAll("p")[2].innerHTML = `<strong>Notes: </strong><br><span style="white-space: pre-wrap;">${notes}</span>`;
 
-                modal.classList.remove("show"); // Remove the 'show' class to trigger the fade-out effect
-                    setTimeout(function() {
-                        modal.style.display = "none"; // Hide the modal after the animation is complete
-                    }, MODAL_TRANSITION_TIME); // Adjust this value to match the duration of your transition
-                sortList(); // Re-sort the list after editing
+                modal.classList.remove("show");
+                setTimeout(function() {
+                    modal.style.display = "none";
+                }, MODAL_TRANSITION_TIME);
+                sortList();
             };
         }
 
@@ -345,6 +584,14 @@
             characters.sort(function(a, b) {
                 var initiativeA = parseInt(a.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
                 var initiativeB = parseInt(b.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
+                
+                // If initiatives are equal, sort by name
+                if (initiativeB === initiativeA) {
+                    var nameA = a.querySelector('.cname').innerText.slice(0, -1).toLowerCase();
+                    var nameB = b.querySelector('.cname').innerText.slice(0, -1).toLowerCase();
+                    return nameA.localeCompare(nameB);
+                }
+                
                 return initiativeB - initiativeA;
             });
 
