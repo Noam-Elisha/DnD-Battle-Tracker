@@ -38,16 +38,17 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            height: 100%;
+            height: 100vh;
             display: flex;
             background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
+            overflow: hidden;
         }
 
         h1 {
             text-align: center;
             font-size: 2.5em;
             color: var(--color-text-light);
-            margin-bottom: 30px;
+            margin: 15px 0 20px 0;
         }
         form {
             max-width: 500px;
@@ -122,9 +123,9 @@
             list-style-type: none;
             padding: 25px;
             padding-right: 25px;
-            overflow: auto; 
-            height: calc(100vh - 100px);
-            margin-top: 0px;
+            overflow-y: auto; 
+            height: calc(100vh - 80px);
+            margin: 0;
             background-color: transparent;
         }
         .fade-in {
@@ -334,7 +335,7 @@
             color: var(--color-text-light);
             font-size: 1.8em;
             margin: 0;
-            padding: 20px 15px;
+            padding: 15px;
             position: relative;
             padding-bottom: 10px;
         }
@@ -354,10 +355,11 @@
         div[style*="width: 40%"] {
             background: linear-gradient(180deg, var(--color-background-dark) 0%, var(--color-background-darker) 100%);
             box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-            padding: 30px;
+            padding: 20px;
             border-right: 1px solid var(--color-transparent-accent);
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
+            height: 100vh;
         }
         /* Add subtle pattern to left panel */
         div[style*="width: 40%"]::before {
@@ -444,6 +446,8 @@
         /* Right panel styling */
         div[style*="width: 60%"] {
             background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
+            height: 100vh;
+            overflow-y: hidden;
         }
         /* Add placeholder color */
         ::placeholder {
@@ -632,6 +636,15 @@
         }
     </style>
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8H1008FDQ3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-8H1008FDQ3');
+</script>
 <body>
     <div style="width: 40%; float:left; overflow:hidden;">
         <h1>Character Initiative Tracker</h1>
