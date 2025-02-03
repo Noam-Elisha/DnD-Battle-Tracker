@@ -35,13 +35,24 @@
             --color-placeholder-focus: #2c2019;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            height: 100vh;
             display: flex;
             background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
-            overflow: hidden;
         }
 
         h1 {
@@ -530,108 +541,100 @@
             div[style*="width: 60%"] {
                 width: 100% !important;
                 float: none;
-                padding: 15px;
             }
 
             div[style*="width: 40%"] {
-                border-right: none;
+                min-height: min-content;  /* Ensure content is visible */
+                max-height: 50%;         /* Don't take more than half */
+                overflow-y: auto;
                 border-bottom: 1px solid var(--color-transparent-accent);
+                padding-bottom: 10px;
+            }
+
+            div[style*="width: 60%"] {
+                height: calc(100% - min(50%, 400px)); /* Take remaining space, but ensure form has enough room */
+                overflow-y: hidden;
+                padding-top: 10px;
+            }
+
+            ul {
+                height: calc(100% - 50px);  /* Adjust for header */
+                overflow-y: auto;
+            }
+
+            h2#chars {
+                margin-top: 0;
+            }
+
+            h1 {
+                font-size: 1.5em;  /* Smaller font */
+                margin: 5px 0;     /* Reduced margin */
+            }
+
+            #characterForm {
+                padding: 5px;  /* Reduced padding */
             }
 
             .character {
-                margin: 10px 0;
+                margin: 5px 0;  /* Reduced margin */
             }
 
             .details {
-                flex-direction: column;
-                padding: 15px;
-                gap: 15px;
+                padding: 5px;  /* Reduced padding */
+                gap: 5px;      /* Reduced gap */
+                font-size: 1em;  /* Smaller font */
+            }
+
+            input[type="text"],
+            input[type="number"],
+            textarea {
+                padding: 6px;  /* Reduced padding */
+                margin-bottom: 5px;  /* Reduced margin */
+                font-size: 14px;  /* Smaller font */
+            }
+
+            .cname {
+                font-size: 1.2em !important;  /* Smaller font */
+                margin-bottom: 5px;  /* Reduced margin */
+            }
+
+            #notes, #editNotes {
+                max-height: 60px;  /* Limit textarea height */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            div[style*="width: 40%"] {
+                max-height: 35vh;  /* Further reduced */
+            }
+
+            div[style*="width: 60%"] {
+                height: 65vh;  /* Increased */
+            }
+
+            ul {
+                height: calc(65vh - 40px);
+            }
+
+            h1 {
+                font-size: 1.3em;  /* Even smaller font */
+            }
+
+            .details {
+                padding: 5px;
+                flex-direction: column;  /* Stack content vertically */
+                gap: 2px;
             }
 
             .details > div:first-child,
             .details > div:last-child {
-                flex: 100%;
+                flex: 100%;  /* Take full width */
                 padding-right: 0;
             }
 
-            .modal-content {
-                width: 95%;
-                margin: 5% auto;
-                padding: 15px;
-                max-height: 90vh;  /* Increased from 80vh */
-                margin-top: 5vh;   /* Reduced from 10% */
-            }
-
-            /* Make form elements in modal more compact */
-            .modal-content input,
-            .modal-content textarea {
-                margin-bottom: 10px;
-            }
-
-            .modal-content .modalp {
-                margin-bottom: 2px;
-                margin-top: 8px;
-            }
-
-            .modal-content h2 {
-                font-size: 1.5em;
-                margin-bottom: 15px;
-            }
-
-            /* Adjust close button position */
-            .close {
-                margin: -5px -5px 0 0;
-            }
-
-            h1 {
-                font-size: 2em;
-                margin-bottom: 20px;
-            }
-
-            .cname {
-                font-size: 1.5em !important;
-                padding-right: 40px;  /* Make room for delete button */
-            }
-
-            #characterForm {
-                padding: 15px;
-            }
-
-            ul {
-                padding: 15px;
-                height: auto;
-                max-height: calc(100vh - 400px);  /* Adjust based on your header height */
-            }
-
-            .delete {
-                width: 32px;
-                height: 32px;
-                right: 10px;
-                top: 10px;
-            }
-        }
-
-        /* Additional adjustments for very small screens */
-        @media screen and (max-width: 480px) {
-            input[type="text"],
-            input[type="number"],
-            textarea {
-                padding: 8px;
-            }
-
-            .modal-content {
-                width: 90%;
-                margin: 3vh auto;
-                padding: 12px;
-                max-height: 94vh;
-            }
-
-            h1 {
-                font-size: 1.8em;
-            }
-
-            .details {
-                padding: 10px;
+            input[type="submit"] {
+                padding: 8px;  /* Reduced padding */
+                font-size: 14px;  /* Smaller font */
             }
         }
     </style>
