@@ -376,7 +376,7 @@
         }
 
         .hp-btn {
-            width: 40px;
+            width: 36px;
             height: 34px;
             border: 1px solid var(--color-transparent-accent);
             border-radius: 6px;
@@ -690,9 +690,9 @@
         /* ── Tiny phones ── */
         @media (max-width: 380px) {
             .hp-btn {
-                width: 34px;
-                height: 30px;
-                font-size: 12px;
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
             }
 
             .hp-display {
@@ -823,6 +823,7 @@
         let currentTurnIndex = -1;
         let currentRound = 0;
         let nextId = 1;
+        let newlyAddedIds = new Set();
 
         /* ── Persistence ── */
         function saveState() {
@@ -877,14 +878,16 @@
         function addCharacter(name, hp, initiative, notes) {
             const hpNum = parseInt(hp, 10) || 0;
             const initNum = parseInt(initiative, 10) || 0;
+            const id = nextId++;
             characters.push({
-                id: nextId++,
+                id,
                 name: name.trim(),
                 hp: hpNum,
                 maxHp: hpNum,
                 initiative: initNum,
                 notes: (notes || '').trim()
             });
+            newlyAddedIds.add(id);
             sortCharacters();
             saveState();
             render();
@@ -997,7 +1000,8 @@
                     ? '<p class="char-notes">' + escapeHtml(ch.notes) + '</p>'
                     : '';
 
-                html += '<li class="character fade-in' + (isActive ? ' active-turn' : '') + '">'
+                const fadeClass = newlyAddedIds.has(ch.id) ? ' fade-in' : '';
+                html += '<li class="character' + fadeClass + (isActive ? ' active-turn' : '') + '">'
                     + '<button class="delete" data-id="' + ch.id + '"></button>'
                     + '<div class="card-body" data-id="' + ch.id + '">'
                     +   '<div class="card-header">'
@@ -1006,11 +1010,13 @@
                     +   '</div>'
                     +   '<div class="hp-bar-container"><div class="hp-bar" style="width:' + pct + '%;background:' + color + ';"></div></div>'
                     +   '<div class="hp-controls">'
+                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-10">-10</button>'
                     +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-5">-5</button>'
                     +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-1">-1</button>'
                     +     '<span class="hp-display">' + ch.hp + ' / ' + ch.maxHp + '</span>'
                     +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="1">+1</button>'
                     +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="5">+5</button>'
+                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="10">+10</button>'
                     +   '</div>'
                     +   notesHtml
                     + '</div>'
@@ -1018,6 +1024,7 @@
             });
 
             list.innerHTML = html;
+            newlyAddedIds.clear();
         }
 
         /* ── Edit Modal ── */
