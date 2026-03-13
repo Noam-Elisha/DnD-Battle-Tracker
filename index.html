@@ -7,38 +7,39 @@
     <style>
         :root {
             /* Primary Colors */
-            --color-background-dark: #2c2019;
-            --color-background-darker: #241812;
-            --color-background-light: #3a2820;
+            --color-background-dark: #2a1f16;
+            --color-background-darker: #1e150e;
+            --color-background-light: #372618;
             --color-background-lighter: #4a332a;
 
             /* Text Colors */
-            --color-text-light: #e8d5b5;
-            --color-text-dark: #2c2019;
-            --color-text-filled: #cd8c50;
+            --color-text-light: #e0cdb0;
+            --color-text-muted: #a08a6e;
+            --color-text-dark: #1e150e;
 
             /* Accent Colors */
             --color-accent: #8b4513;
             --color-accent-light: #a0522d;
-            --color-accent-lighter: #cd8c50;
+            --color-accent-lighter: #c07840;
 
             /* Transparency Colors */
-            --color-transparent-dark: rgba(44, 32, 25, 0.9);
-            --color-transparent-darker: rgba(44, 32, 25, 0.95);
-            --color-transparent-accent: rgba(139, 69, 19, 0.3);
-            --color-transparent-accent-hover: rgba(139, 69, 19, 0.5);
+            --color-transparent-accent: rgba(139, 69, 19, 0.25);
+            --color-transparent-accent-hover: rgba(139, 69, 19, 0.4);
             --color-transparent-shadow: rgba(139, 69, 19, 0.2);
             --color-form-background: rgba(232, 213, 181, 0.05);
 
             /* Input Colors */
-            --color-input-focus: #e8d5b5;
-            --color-placeholder-focus: #2c2019;
+            --color-input-bg: rgba(0, 0, 0, 0.2);
+            --color-input-bg-hover: rgba(0, 0, 0, 0.25);
+            --color-input-bg-focus: rgba(232, 213, 181, 0.12);
+            --color-input-border: rgba(139, 69, 19, 0.25);
+            --color-input-border-focus: rgba(192, 120, 64, 0.6);
 
             /* HP Colors */
             --color-hp-good: #4a7c3f;
             --color-hp-warning: #b8860b;
             --color-hp-danger: #8b2500;
-            --color-turn-glow: rgba(205, 140, 80, 0.6);
+            --color-turn-glow: rgba(192, 120, 64, 0.5);
         }
 
         /* Reset */
@@ -52,6 +53,11 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            scrollbar-width: none;
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
         }
 
         body {
@@ -119,47 +125,34 @@
             width: 100%;
             padding: 10px 12px;
             margin-bottom: 12px;
-            border: 2px solid var(--color-transparent-accent);
+            border: 1px solid var(--color-input-border);
             border-radius: 8px;
             font-size: 16px;
-            background: var(--color-transparent-dark);
+            background: var(--color-input-bg);
             color: var(--color-text-light);
-            transition: background 0.3s, border-color 0.3s, color 0.3s;
+            transition: background 0.2s, border-color 0.2s;
             resize: vertical;
         }
 
         input[type="text"]:hover,
         input[type="number"]:hover,
         textarea:hover {
-            background: var(--color-transparent-darker);
+            background: var(--color-input-bg-hover);
             border-color: var(--color-transparent-accent-hover);
         }
 
         input[type="text"]:focus,
         input[type="number"]:focus,
         textarea:focus {
-            background: var(--color-input-focus);
-            color: var(--color-text-dark);
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
+            background: var(--color-input-bg-focus);
+            color: var(--color-text-light);
+            border-color: var(--color-input-border-focus);
+            box-shadow: 0 0 0 2px var(--color-transparent-shadow);
             outline: none;
         }
 
-        input[type="text"]:not(:placeholder-shown),
-        input[type="number"]:not(:placeholder-shown),
-        textarea:not(:placeholder-shown) {
-            color: var(--color-text-filled);
-        }
-
-        input[type="text"]:focus::placeholder,
-        input[type="number"]:focus::placeholder,
-        textarea:focus::placeholder {
-            color: var(--color-placeholder-focus);
-        }
-
         ::placeholder {
-            color: var(--color-text-light);
-            opacity: 0.6;
+            color: var(--color-text-muted);
         }
 
         input[type="submit"], button.btn {
@@ -257,6 +250,7 @@
             font-weight: 600;
             color: var(--color-accent-lighter);
             white-space: nowrap;
+            opacity: 0.9;
         }
 
         /* ── Character List ── */
@@ -318,19 +312,19 @@
 
         /* ── Card Body ── */
         .card-body {
-            padding: 12px 14px 12px 18px;
+            padding: 10px 14px 10px 18px;
             cursor: pointer;
         }
 
         .card-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
+            gap: 8px;
+            margin-bottom: 4px;
         }
 
         .cname {
-            font-size: 1.3em;
+            font-size: 1.2em;
             font-weight: 600;
             color: var(--color-text-light);
             white-space: nowrap;
@@ -341,15 +335,21 @@
             min-width: 0;
         }
 
+        .hp-display {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            white-space: nowrap;
+        }
+
         .initiative-badge {
             background: var(--color-accent);
             color: white;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.85em;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75em;
             font-weight: 600;
             flex-shrink: 0;
-            margin-left: 8px;
         }
 
         /* ── HP Bar ── */
@@ -358,7 +358,7 @@
             background: var(--color-background-darker);
             border-radius: 2px;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .hp-bar {
@@ -371,18 +371,27 @@
         .hp-controls {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 4px;
+            gap: 3px;
+            max-width: 320px;
+        }
+
+        .hp-group {
+            display: flex;
+            gap: 3px;
+        }
+
+        .hp-group-spacer {
+            flex: 1;
         }
 
         .hp-btn {
-            width: 36px;
-            height: 34px;
+            width: 34px;
+            height: 30px;
             border: 1px solid var(--color-transparent-accent);
             border-radius: 6px;
             background: var(--color-background-darker);
             color: var(--color-text-light);
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
@@ -411,20 +420,139 @@
             background: rgba(112, 192, 112, 0.15);
         }
 
-        .hp-display {
-            min-width: 80px;
-            text-align: center;
+        /* ── Down Button ── */
+        .down-btn {
+            background: var(--color-background-darker) !important;
+            color: #d4a843 !important;
+            border-color: rgba(212, 168, 67, 0.4) !important;
+            font-size: 11px !important;
+            width: auto !important;
+            padding: 0 8px !important;
+        }
+
+        .down-btn:hover {
+            background: rgba(212, 168, 67, 0.15) !important;
+            border-color: #d4a843 !important;
+        }
+
+        /* ── Death Saves ── */
+        .death-saves {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .save-boxes {
+            display: flex;
+            gap: 4px;
+        }
+
+        .save-box {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--color-transparent-accent-hover);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 14px;
+            font-weight: 700;
+        }
+
+        .save-box.success {
+            border-color: var(--color-hp-good);
+            color: #70c070;
+        }
+
+        .save-box.fail {
+            border-color: var(--color-hp-danger);
+            color: #e07070;
+        }
+
+        .save-controls {
+            display: flex;
+            gap: 6px;
+            margin-left: auto;
+        }
+
+        .save-btn {
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--color-text-light);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .save-success {
+            background: rgba(112, 192, 112, 0.1);
+            border-color: var(--color-hp-good);
+            color: #70c070;
+        }
+
+        .save-success:hover {
+            background: rgba(112, 192, 112, 0.25);
+        }
+
+        .save-failure {
+            background: rgba(224, 112, 112, 0.1);
+            border-color: var(--color-hp-danger);
+            color: #e07070;
+        }
+
+        .save-failure:hover {
+            background: rgba(224, 112, 112, 0.25);
+        }
+
+        /* ── Dead State ── */
+        .character.dead {
+            opacity: 0.5;
+            filter: grayscale(0.6);
+        }
+
+        .character.dead:hover {
+            transform: none;
+        }
+
+        .dead-overlay {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 14px 6px 18px;
+        }
+
+        .dead-text {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #e07070;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .revive-btn {
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-hp-good);
+            background: rgba(112, 192, 112, 0.1);
+            color: #70c070;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .revive-btn:hover {
+            background: rgba(112, 192, 112, 0.25);
         }
 
         /* ── Notes ── */
         .char-notes {
-            font-size: 0.85em;
-            color: var(--color-text-light);
-            opacity: 0.75;
-            margin-top: 6px;
+            font-size: 0.8em;
+            color: var(--color-text-muted);
+            margin-top: 4px;
             white-space: pre-wrap;
             word-break: break-word;
         }
@@ -572,80 +700,58 @@
             margin-bottom: 16px;
         }
 
-        /* ── Modal ── */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 30;
-            left: 0; top: 0;
-            width: 100%; height: 100%;
-            background: var(--color-transparent-dark);
-            opacity: 0;
-            transition: opacity 0.15s ease;
+        /* ── Inline Edit Section ── */
+        .edit-section {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s ease;
+            background: var(--color-background-darker);
+        }
+
+        .edit-section.open {
+            grid-template-rows: 1fr;
+        }
+
+        .edit-section.settled {
+            grid-template-rows: auto;
+            transition: none;
+        }
+
+        .edit-inner {
             overflow: hidden;
         }
 
-        .modal.show {
-            display: block;
-            opacity: 1;
+        .edit-section.open .edit-inner {
+            overflow: visible;
+            padding: 10px 14px 12px 18px;
+            border-top: 1px solid var(--color-transparent-accent);
         }
 
-        .modal-content {
-            position: relative;
-            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
-            margin: 8% auto;
-            padding: 25px;
-            border: 1px solid var(--color-transparent-accent);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            color: var(--color-text-light);
-            overflow-y: auto;
-            max-height: 85vh;
-        }
-
-        .modal-content h2 {
-            color: var(--color-text-light);
-            font-size: 1.6em;
-            margin-bottom: 16px;
-            font-weight: 600;
-        }
-
-        .close {
-            position: absolute;
-            right: 15px;
-            top: 15px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--color-background-darker);
-            border: 1px solid var(--color-transparent-accent);
-            color: var(--color-text-light);
+        .edit-section .edit-row {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 20px;
-            line-height: 1;
-            transition: background 0.2s;
-            padding: 0;
-            font-family: Arial, sans-serif;
+            gap: 8px;
+            margin-bottom: 0;
         }
 
-        .close::after {
-            content: "\00d7";
+        .edit-section .edit-row > * {
+            flex: 1;
         }
 
-        .close:hover {
-            background: var(--color-accent);
+        .edit-section input,
+        .edit-section textarea {
+            margin-bottom: 6px;
+            font-size: 13px;
+            padding: 6px 8px;
         }
 
-        .modalp {
-            margin-bottom: 4px;
-            margin-top: 8px;
-            font-size: 0.9em;
-            opacity: 0.8;
+        .edit-section .edit-label {
+            font-size: 0.75em;
+            color: var(--color-text-muted);
+            margin-bottom: 1px;
+        }
+
+        .character.expanded .card-body {
+            background: var(--color-transparent-accent);
         }
 
         /* ── Desktop Layout ── */
@@ -674,34 +780,46 @@
             }
 
             .card-body {
-                padding: 14px 18px 14px 22px;
+                padding: 12px 18px 12px 22px;
             }
 
             .cname {
-                font-size: 1.5em;
+                font-size: 1.4em;
             }
 
-            .hp-display {
-                font-size: 15px;
-                min-width: 90px;
+            .edit-inner {
+                display: grid;
+                grid-template-columns: auto 1fr;
+                gap: 0 16px;
+            }
+
+            .edit-left {
+                min-width: 0;
+                width: 240px;
+            }
+
+            .edit-right {
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .edit-right textarea {
+                min-height: 80px;
+                margin-bottom: 0;
             }
         }
 
         /* ── Tiny phones ── */
         @media (max-width: 380px) {
             .hp-btn {
-                width: 28px;
-                height: 28px;
+                width: 26px;
+                height: 26px;
                 font-size: 11px;
             }
 
-            .hp-display {
-                font-size: 12px;
-                min-width: 60px;
-            }
-
             .cname {
-                font-size: 1.1em;
+                font-size: 1em;
             }
 
             .turn-btn, .turn-btn-secondary {
@@ -711,11 +829,6 @@
 
             .round-display {
                 font-size: 12px;
-            }
-
-            .initiative-badge {
-                font-size: 0.75em;
-                padding: 2px 8px;
             }
         }
 
@@ -788,33 +901,6 @@
             <textarea id="mNotes" placeholder="Notes (optional)" rows="2"></textarea>
             <input type="submit" value="Add Character">
         </form>
-    </div>
-
-    <!-- Edit Modal -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="editModalClose"></span>
-            <h2>Edit Character</h2>
-            <form id="editForm">
-                <p class="modalp">Name:</p>
-                <input type="text" id="editName" placeholder="Name" required>
-                <div class="form-row">
-                    <div>
-                        <p class="modalp">HP:</p>
-                        <input type="number" id="editHealth" placeholder="HP" required>
-                    </div>
-                    <div>
-                        <p class="modalp">Max HP:</p>
-                        <input type="number" id="editMaxHealth" placeholder="Max HP" required>
-                    </div>
-                </div>
-                <p class="modalp">Initiative:</p>
-                <input type="number" id="editInitiative" placeholder="Initiative" required>
-                <p class="modalp">Notes:</p>
-                <textarea id="editNotes" placeholder="Notes (optional)" rows="3"></textarea>
-                <input type="submit" value="Save Changes">
-            </form>
-        </div>
     </div>
 
     <script>
@@ -923,9 +1009,51 @@
         }
 
         function adjustHp(id, delta) {
+            commitAllEdits();
+            const ch = characters.find(c => c.id === id);
+            if (!ch || ch.isDead || ch.isDown) return;
+            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp + delta));
+            saveState();
+            render();
+        }
+
+        function markDown(id) {
+            commitAllEdits();
+            const ch = characters.find(c => c.id === id);
+            if (!ch || ch.isDead) return;
+            ch.isDown = true;
+            ch.hp = 0;
+            ch.deathSaves = [];
+            saveState();
+            render();
+        }
+
+        function deathSave(id, type) {
+            const ch = characters.find(c => c.id === id);
+            if (!ch || !ch.isDown || ch.isDead) return;
+            ch.deathSaves = ch.deathSaves || [];
+            ch.deathSaves.push(type);
+            var successes = ch.deathSaves.filter(function(s) { return s === 's'; }).length;
+            var failures = ch.deathSaves.filter(function(s) { return s === 'f'; }).length;
+            if (successes >= 3) {
+                ch.isDown = false;
+                ch.hp = 1;
+                ch.deathSaves = [];
+            } else if (failures >= 3) {
+                ch.isDead = true;
+                ch.isDown = false;
+            }
+            saveState();
+            render();
+        }
+
+        function reviveCharacter(id) {
             const ch = characters.find(c => c.id === id);
             if (!ch) return;
-            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp + delta));
+            ch.isDead = false;
+            ch.isDown = false;
+            ch.hp = 1;
+            ch.deathSaves = [];
             saveState();
             render();
         }
@@ -947,6 +1075,7 @@
 
         /* ── Turn Tracking ── */
         function nextTurn() {
+            commitAllEdits();
             if (characters.length === 0) return;
             if (currentTurnIndex === -1) {
                 currentTurnIndex = 0;
@@ -963,6 +1092,7 @@
         }
 
         function resetCombat() {
+            commitAllEdits();
             currentTurnIndex = -1;
             currentRound = 0;
             saveState();
@@ -970,6 +1100,7 @@
         }
 
         function clearAll() {
+            expandedIds.clear();
             characters = [];
             currentTurnIndex = -1;
             currentRound = 0;
@@ -983,17 +1114,21 @@
             const list = document.getElementById('characterList');
             const roundEl = document.getElementById('roundDisplay');
 
-            // Round display
+            // Round display and button label
+            const nextTurnBtn = document.getElementById('nextTurnBtn');
             if (currentTurnIndex === -1 || currentRound === 0) {
                 roundEl.textContent = 'Not in combat';
+                if (nextTurnBtn) nextTurnBtn.textContent = 'Start Battle';
             } else {
                 roundEl.textContent = 'Round ' + currentRound;
+                if (nextTurnBtn) nextTurnBtn.textContent = 'Next Turn';
             }
 
             // Build HTML
             let html = '';
             characters.forEach((ch, i) => {
                 const isActive = i === currentTurnIndex;
+                const isExpanded = expandedIds.has(ch.id);
                 const pct = ch.maxHp > 0 ? Math.round((ch.hp / ch.maxHp) * 100) : 0;
                 const color = hpColor(ch.hp, ch.maxHp);
                 const notesHtml = ch.notes
@@ -1001,24 +1136,82 @@
                     : '';
 
                 const fadeClass = newlyAddedIds.has(ch.id) ? ' fade-in' : '';
-                html += '<li class="character' + fadeClass + (isActive ? ' active-turn' : '') + '">'
+                const expandedClass = isExpanded ? ' expanded' : '';
+                const deadClass = ch.isDead ? ' dead' : '';
+
+                // Build middle section based on state
+                var middleHtml = '';
+                if (ch.isDead) {
+                    middleHtml = '<div class="dead-overlay">'
+                        + '<span class="dead-text">Dead</span>'
+                        + '<button class="revive-btn" data-id="' + ch.id + '">Revive</button>'
+                        + '</div>';
+                } else if (ch.isDown) {
+                    var saves = ch.deathSaves || [];
+                    var boxesHtml = '<div class="save-boxes">';
+                    for (var b = 0; b < 5; b++) {
+                        if (b < saves.length) {
+                            boxesHtml += saves[b] === 's'
+                                ? '<div class="save-box success">\u2713</div>'
+                                : '<div class="save-box fail">\u2717</div>';
+                        } else {
+                            boxesHtml += '<div class="save-box"></div>';
+                        }
+                    }
+                    boxesHtml += '</div>';
+                    middleHtml = '<div class="death-saves">'
+                        + boxesHtml
+                        + '<div class="save-controls">'
+                        +   '<button class="save-btn save-success" data-id="' + ch.id + '">Success</button>'
+                        +   '<button class="save-btn save-failure" data-id="' + ch.id + '">Failure</button>'
+                        + '</div>'
+                        + '</div>';
+                } else {
+                    middleHtml = '<div class="hp-bar-container"><div class="hp-bar" style="width:' + pct + '%;background:' + color + ';"></div></div>'
+                        + '<div class="hp-controls">'
+                        +   '<div class="hp-group">'
+                        +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-10">-10</button>'
+                        +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-5">-5</button>'
+                        +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-1">-1</button>'
+                        +   '</div>'
+                        +   '<button class="hp-btn down-btn" data-id="' + ch.id + '">Down</button>'
+                        +   '<div class="hp-group">'
+                        +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="1">+1</button>'
+                        +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="5">+5</button>'
+                        +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="10">+10</button>'
+                        +   '</div>'
+                        + '</div>';
+                }
+
+                html += '<li class="character' + fadeClass + expandedClass + deadClass + (isActive ? ' active-turn' : '') + '">'
                     + '<button class="delete" data-id="' + ch.id + '"></button>'
                     + '<div class="card-body" data-id="' + ch.id + '">'
                     +   '<div class="card-header">'
                     +     '<h2 class="cname">' + escapeHtml(ch.name) + '</h2>'
+                    +     '<span class="hp-display">' + ch.hp + '/' + ch.maxHp + '</span>'
                     +     '<span class="initiative-badge">' + ch.initiative + '</span>'
                     +   '</div>'
-                    +   '<div class="hp-bar-container"><div class="hp-bar" style="width:' + pct + '%;background:' + color + ';"></div></div>'
-                    +   '<div class="hp-controls">'
-                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-10">-10</button>'
-                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-5">-5</button>'
-                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-1">-1</button>'
-                    +     '<span class="hp-display">' + ch.hp + ' / ' + ch.maxHp + '</span>'
-                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="1">+1</button>'
-                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="5">+5</button>'
-                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="10">+10</button>'
-                    +   '</div>'
+                    +   middleHtml
                     +   notesHtml
+                    + '</div>'
+                    + '<div class="edit-section' + (isExpanded ? (newlyExpandedId === ch.id ? ' open' : ' open settled') : '') + '" data-id="' + ch.id + '">'
+                    +   '<div class="edit-inner">'
+                    +     '<div class="edit-left">'
+                    +       '<p class="edit-label">Name</p>'
+                    +       '<input type="text" class="edit-name" value="' + escapeHtml(ch.name) + '" data-id="' + ch.id + '">'
+                    +       '<div class="edit-row">'
+                    +         '<div><p class="edit-label">HP</p><input type="number" class="edit-hp" value="' + ch.hp + '" data-id="' + ch.id + '"></div>'
+                    +         '<div><p class="edit-label">Max HP</p><input type="number" class="edit-maxhp" value="' + ch.maxHp + '" data-id="' + ch.id + '"></div>'
+                    +         '<div><p class="edit-label">Initiative</p><input type="number" class="edit-init" value="' + ch.initiative + '" data-id="' + ch.id + '"></div>'
+                    +       '</div>'
+                    +     '</div>'
+                    +     '<div class="edit-right">'
+                    +       '<p class="edit-label">Notes</p>'
+                    +       '<textarea class="edit-notes" rows="2" data-id="' + ch.id + '"'
+                    +         (ch.notesHeight ? ' style="height:' + ch.notesHeight + 'px"' : '')
+                    +       '>' + escapeHtml(ch.notes) + '</textarea>'
+                    +     '</div>'
+                    +   '</div>'
                     + '</div>'
                     + '</li>';
             });
@@ -1027,33 +1220,61 @@
             newlyAddedIds.clear();
         }
 
-        /* ── Edit Modal ── */
-        let editingId = null;
-        const MODAL_TRANSITION_TIME = 150;
+        /* ── Inline Edit ── */
+        let expandedIds = new Set();
+        let newlyExpandedId = null;
 
-        function openEditModal(id) {
+        function commitEdit(id) {
+            const section = document.querySelector('.edit-section[data-id="' + id + '"]');
+            if (!section) return;
             const ch = characters.find(c => c.id === id);
             if (!ch) return;
-            editingId = id;
-
-            document.getElementById('editName').value = ch.name;
-            document.getElementById('editHealth').value = ch.hp;
-            document.getElementById('editMaxHealth').value = ch.maxHp;
-            document.getElementById('editInitiative').value = ch.initiative;
-            document.getElementById('editNotes').value = ch.notes;
-
-            const modal = document.getElementById('myModal');
-            modal.style.display = 'block';
-            // Force reflow then add class for transition
-            modal.offsetHeight;
-            modal.classList.add('show');
+            ch.name = section.querySelector('.edit-name').value.trim() || ch.name;
+            ch.hp = parseInt(section.querySelector('.edit-hp').value, 10) || 0;
+            ch.maxHp = parseInt(section.querySelector('.edit-maxhp').value, 10) || 0;
+            ch.initiative = parseInt(section.querySelector('.edit-init').value, 10) || 0;
+            ch.notes = (section.querySelector('.edit-notes').value || '').trim();
+            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
+            // Revive if HP set positive while dead/down
+            if (ch.hp > 0 && (ch.isDead || ch.isDown)) {
+                ch.isDead = false;
+                ch.isDown = false;
+                ch.deathSaves = [];
+            }
+            const ta = section.querySelector('.edit-notes');
+            if (ta && ta.style.height) {
+                ch.notesHeight = parseInt(ta.style.height, 10);
+            } else if (ta) {
+                ch.notesHeight = ta.offsetHeight;
+            }
+            saveState();
         }
 
-        function closeEditModal() {
-            const modal = document.getElementById('myModal');
-            modal.classList.remove('show');
-            setTimeout(() => { modal.style.display = 'none'; }, MODAL_TRANSITION_TIME);
-            editingId = null;
+        function commitAllEdits() {
+            expandedIds.forEach(id => commitEdit(id));
+        }
+
+        function toggleExpand(id) {
+            if (expandedIds.has(id)) {
+                commitEdit(id);
+                expandedIds.delete(id);
+                sortCharacters();
+                render();
+            } else {
+                commitAllEdits();
+                expandedIds.add(id);
+                newlyExpandedId = id;
+                sortCharacters();
+                render();
+                newlyExpandedId = null;
+                setTimeout(() => {
+                    const section = document.querySelector('.edit-section[data-id="' + id + '"].open');
+                    if (section) {
+                        section.classList.add('settled');
+                        section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }, 320);
+            }
         }
 
         /* ── Mobile Form ── */
@@ -1090,6 +1311,32 @@
             const list = document.getElementById('characterList');
 
             list.addEventListener('click', function(e) {
+                // Down button
+                const downBtn = e.target.closest('.down-btn');
+                if (downBtn) {
+                    e.stopPropagation();
+                    markDown(parseInt(downBtn.dataset.id, 10));
+                    return;
+                }
+
+                // Death save buttons
+                const saveBtn = e.target.closest('.save-btn');
+                if (saveBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(saveBtn.dataset.id, 10);
+                    const type = saveBtn.classList.contains('save-success') ? 's' : 'f';
+                    deathSave(id, type);
+                    return;
+                }
+
+                // Revive button
+                const revBtn = e.target.closest('.revive-btn');
+                if (revBtn) {
+                    e.stopPropagation();
+                    reviveCharacter(parseInt(revBtn.dataset.id, 10));
+                    return;
+                }
+
                 // HP buttons
                 const hpBtn = e.target.closest('.hp-btn');
                 if (hpBtn) {
@@ -1111,13 +1358,61 @@
                     return;
                 }
 
-                // Card body click => edit modal
+                // Clicks inside edit section should not toggle
+                if (e.target.closest('.edit-section')) {
+                    return;
+                }
+
+                // Card body click => toggle inline edit
                 const cardBody = e.target.closest('.card-body');
                 if (cardBody) {
                     const id = parseInt(cardBody.dataset.id, 10);
-                    openEditModal(id);
+                    toggleExpand(id);
                     return;
                 }
+            });
+
+            // Live-update card header when editing fields
+            list.addEventListener('input', function(e) {
+                const el = e.target;
+                if (!el.dataset.id) return;
+                const id = parseInt(el.dataset.id, 10);
+                const card = el.closest('.character');
+                if (!card) return;
+                const section = card.querySelector('.edit-section');
+                if (!section) return;
+                const hp = parseInt(section.querySelector('.edit-hp').value, 10) || 0;
+                const maxHp = parseInt(section.querySelector('.edit-maxhp').value, 10) || 0;
+                // Live-update HP display
+                const hpDisplay = card.querySelector('.hp-display');
+                if (hpDisplay) hpDisplay.textContent = hp + '/' + maxHp;
+                // Revive immediately if HP set positive while dead/down
+                const ch = characters.find(c => c.id === id);
+                if (ch && hp > 0 && (ch.isDead || ch.isDown)) {
+                    commitEdit(id);
+                    render();
+                }
+            });
+
+            // Track notes textarea resize — pointerdown on textarea starts tracking,
+            // pointerup anywhere saves the new height
+            let resizingTextarea = null;
+            list.addEventListener('pointerdown', function(e) {
+                const ta = e.target.closest('.edit-notes');
+                if (ta) resizingTextarea = ta;
+            });
+            document.addEventListener('pointerup', function() {
+                if (resizingTextarea && resizingTextarea.dataset.id) {
+                    const ch = characters.find(c => c.id === parseInt(resizingTextarea.dataset.id, 10));
+                    if (ch) {
+                        const h = resizingTextarea.offsetHeight;
+                        if (h > 0 && h !== ch.notesHeight) {
+                            ch.notesHeight = h;
+                            saveState();
+                        }
+                    }
+                }
+                resizingTextarea = null;
             });
 
             // Desktop form
@@ -1154,36 +1449,6 @@
             document.getElementById('fab').addEventListener('click', openMobileForm);
             document.getElementById('mobileFormOverlay').addEventListener('click', closeMobileForm);
             document.getElementById('mobileFormClose').addEventListener('click', closeMobileForm);
-
-            // Edit modal
-            document.getElementById('editModalClose').addEventListener('click', closeEditModal);
-
-            // Backdrop click for modal
-            let modalMouseDownTarget = null;
-            const modal = document.getElementById('myModal');
-            modal.addEventListener('mousedown', function(e) {
-                modalMouseDownTarget = e.target;
-            });
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal && modalMouseDownTarget === modal) {
-                    closeEditModal();
-                }
-            });
-
-            // Edit form submit
-            document.getElementById('editForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                if (editingId === null) return;
-                updateCharacter(
-                    editingId,
-                    document.getElementById('editName').value,
-                    document.getElementById('editHealth').value,
-                    document.getElementById('editMaxHealth').value,
-                    document.getElementById('editInitiative').value,
-                    document.getElementById('editNotes').value
-                );
-                closeEditModal();
-            });
 
             render();
         }
