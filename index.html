@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Character Initiative Tracker</title>
+    <title>D&D Battle Tracker</title>
     <style>
         :root {
             /* Primary Colors */
@@ -11,17 +11,17 @@
             --color-background-darker: #241812;
             --color-background-light: #3a2820;
             --color-background-lighter: #4a332a;
-            
+
             /* Text Colors */
             --color-text-light: #e8d5b5;
             --color-text-dark: #2c2019;
             --color-text-filled: #cd8c50;
-            
+
             /* Accent Colors */
             --color-accent: #8b4513;
             --color-accent-light: #a0522d;
             --color-accent-lighter: #cd8c50;
-            
+
             /* Transparency Colors */
             --color-transparent-dark: rgba(44, 32, 25, 0.9);
             --color-transparent-darker: rgba(44, 32, 25, 0.95);
@@ -29,21 +29,26 @@
             --color-transparent-accent-hover: rgba(139, 69, 19, 0.5);
             --color-transparent-shadow: rgba(139, 69, 19, 0.2);
             --color-form-background: rgba(232, 213, 181, 0.05);
-            
+
             /* Input Colors */
             --color-input-focus: #e8d5b5;
             --color-placeholder-focus: #2c2019;
+
+            /* HP Colors */
+            --color-hp-good: #4a7c3f;
+            --color-hp-warning: #b8860b;
+            --color-hp-danger: #8b2500;
+            --color-turn-glow: rgba(205, 140, 80, 0.6);
         }
 
-        * {
+        /* Reset */
+        *, *::before, *::after {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
         html, body {
-            margin: 0;
-            padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
@@ -52,36 +57,74 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
+            flex-direction: column;
             background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
+            color: var(--color-text-light);
         }
 
-        h1 {
+        /* ── Sidebar (hidden on mobile) ── */
+        .sidebar {
+            display: none;
+            background: linear-gradient(180deg, var(--color-background-dark) 0%, var(--color-background-darker) 100%);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            padding: 20px;
+            border-right: 1px solid var(--color-transparent-accent);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .sidebar h1 {
             text-align: center;
-            font-size: 2.5em;
+            font-size: 2em;
             color: var(--color-text-light);
-            margin: 15px 0 20px 0;
+            margin: 15px 0 25px;
+            padding-bottom: 15px;
+            position: relative;
         }
-        form {
-            max-width: 500px;
-            margin: 0 auto;
+
+        .sidebar h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg,
+                rgba(205,140,80,0) 0%,
+                rgba(205,140,80,0.5) 50%,
+                rgba(205,140,80,0) 100%);
         }
-        input {
-            width: 35%;
+
+        /* ── Forms (shared styles) ── */
+        .form-container {
+            background: var(--color-form-background);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--color-transparent-accent);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-row > * {
+            flex: 1;
         }
 
         input[type="text"],
         input[type="number"],
         textarea {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
+            padding: 10px 12px;
+            margin-bottom: 12px;
             border: 2px solid var(--color-transparent-accent);
             border-radius: 8px;
             font-size: 16px;
-            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
             background: var(--color-transparent-dark);
-            color: var(--color-text-dark);
+            color: var(--color-text-light);
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
             resize: vertical;
         }
 
@@ -92,20 +135,14 @@
             border-color: var(--color-transparent-accent-hover);
         }
 
-        /* Combined all focus states into one rule */
         input[type="text"]:focus,
         input[type="number"]:focus,
-        textarea:focus,
-        input[type="text"]:focus:placeholder-shown,
-        input[type="number"]:focus:placeholder-shown,
-        textarea:focus:placeholder-shown,
-        input[type="text"]:focus:not(:placeholder-shown),
-        input[type="number"]:focus:not(:placeholder-shown),
-        textarea:focus:not(:placeholder-shown) {
+        textarea:focus {
             background: var(--color-input-focus);
             color: var(--color-text-dark);
             border-color: var(--color-accent);
             box-shadow: 0 0 0 3px var(--color-transparent-shadow);
+            outline: none;
         }
 
         input[type="text"]:not(:placeholder-shown),
@@ -114,9 +151,20 @@
             color: var(--color-text-filled);
         }
 
-        input[type="submit"] {
+        input[type="text"]:focus::placeholder,
+        input[type="number"]:focus::placeholder,
+        textarea:focus::placeholder {
+            color: var(--color-placeholder-focus);
+        }
+
+        ::placeholder {
+            color: var(--color-text-light);
+            opacity: 0.6;
+        }
+
+        input[type="submit"], button.btn {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background-color: var(--color-accent);
             color: white;
             border: none;
@@ -124,56 +172,416 @@
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
         }
 
-        input[type="submit"]:hover {
+        input[type="submit"]:hover, button.btn:hover {
             background-color: var(--color-accent-light);
         }
-        ul {
-            list-style-type: none;
-            padding: 25px;
-            padding-right: 25px;
-            overflow-y: auto; 
-            height: calc(100vh - 80px);
-            margin: 0;
-            background-color: transparent;
-        }
-        .fade-in {
-            animation: fadeIn .5s ease forwards; /* Adjust the duration and timing function as needed */
-            opacity: 0; /* Start with opacity 0 */
+
+        #clearAllBtn {
+            margin-top: 12px;
+            background: transparent;
+            border: 1px solid var(--color-transparent-accent);
+            color: var(--color-text-light);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
         }
 
-        @keyframes fadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
+        #clearAllBtn:hover {
+            opacity: 1;
         }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; }
+
+        /* ── Main Content ── */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-height: 0;
         }
-        .fade-out {
-            animation: fadeOut 0.3s ease forwards; /* Adjust the duration and timing function as needed */
+
+        /* ── Turn Bar ── */
+        .turn-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--color-background-darker);
+            border-bottom: 1px solid var(--color-transparent-accent);
+            flex-shrink: 0;
         }
-        li {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 5px;
-            position: relative;
+
+        .turn-btn {
+            padding: 8px 16px;
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
             cursor: pointer;
-            
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            white-space: nowrap;
         }
+
+        .turn-btn:hover {
+            background: var(--color-accent-light);
+        }
+
+        .turn-btn-secondary {
+            padding: 8px 12px;
+            background: transparent;
+            color: var(--color-text-light);
+            border: 1px solid var(--color-transparent-accent);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .turn-btn-secondary:hover {
+            border-color: var(--color-accent);
+            background: var(--color-transparent-accent);
+        }
+
+        .round-display {
+            margin-left: auto;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-accent-lighter);
+            white-space: nowrap;
+        }
+
+        /* ── Character List ── */
+        #characterList {
+            list-style: none;
+            padding: 12px;
+            overflow-y: auto;
+            flex: 1;
+            margin: 0;
+        }
+
+        /* ── Character Card ── */
+        .character {
+            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            color: var(--color-text-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            border-radius: 2px;
+            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
+        }
+
+        .character:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: linear-gradient(180deg, var(--color-background-lighter) 0%, var(--color-background-light) 100%);
+        }
+
+        .character.active-turn {
+            box-shadow: 0 0 12px var(--color-turn-glow), 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .character.active-turn::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid var(--color-accent-lighter);
+            z-index: 1;
+        }
+
+        /* ── Card Body ── */
+        .card-body {
+            padding: 12px 14px 12px 18px;
+            cursor: pointer;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .cname {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--color-text-light);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .initiative-badge {
+            background: var(--color-accent);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        /* ── HP Bar ── */
+        .hp-bar-container {
+            height: 4px;
+            background: var(--color-background-darker);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .hp-bar {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        /* ── HP Controls ── */
+        .hp-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .hp-btn {
+            width: 40px;
+            height: 34px;
+            border: 1px solid var(--color-transparent-accent);
+            border-radius: 6px;
+            background: var(--color-background-darker);
+            color: var(--color-text-light);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .hp-btn:hover {
+            border-color: var(--color-accent);
+        }
+
+        .hp-minus {
+            color: #e07070;
+        }
+
+        .hp-minus:hover {
+            background: rgba(224, 112, 112, 0.15);
+        }
+
+        .hp-plus {
+            color: #70c070;
+        }
+
+        .hp-plus:hover {
+            background: rgba(112, 192, 112, 0.15);
+        }
+
+        .hp-display {
+            min-width: 80px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-light);
+        }
+
+        /* ── Notes ── */
+        .char-notes {
+            font-size: 0.85em;
+            color: var(--color-text-light);
+            opacity: 0.75;
+            margin-top: 6px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ── Delete Button ── */
+        .delete {
+            position: absolute;
+            right: 8px;
+            top: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--color-background-darker);
+            border: 1px solid var(--color-transparent-accent);
+            color: var(--color-text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+            opacity: 0;
+            transition: opacity 0.2s, background 0.2s;
+            z-index: 2;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .delete::after {
+            content: "\00d7";
+        }
+
+        .character:hover .delete {
+            opacity: 0.8;
+        }
+
+        .delete:hover {
+            background: var(--color-accent);
+            opacity: 1 !important;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(40px); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+
+        /* ── FAB (Mobile) ── */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .fab:hover {
+            background: var(--color-accent-light);
+            transform: scale(1.05);
+        }
+
+        /* ── Mobile Bottom Sheet ── */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-overlay.open {
+            display: block;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 16px 20px 24px;
+            z-index: 21;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.open {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 4px;
+            background: var(--color-transparent-accent-hover);
+            border-radius: 2px;
+            margin: 0 auto 12px;
+        }
+
+        .sheet-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--color-text-light);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .bottom-sheet h2 {
+            color: var(--color-text-light);
+            font-size: 1.4em;
+            margin-bottom: 16px;
+        }
+
+        /* ── Modal ── */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--color-transparent-dark);
+            z-index: 30;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background: var(--color-transparent-dark);
             opacity: 0;
-            transition: opacity 0.09s ease-in-out;
+            transition: opacity 0.15s ease;
             overflow: hidden;
         }
 
@@ -185,35 +593,33 @@
         .modal-content {
             position: relative;
             background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
-            margin: 10% auto;
+            margin: 8% auto;
             padding: 25px;
             border: 1px solid var(--color-transparent-accent);
             border-radius: 16px;
             width: 90%;
             max-width: 500px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             color: var(--color-text-light);
             overflow-y: auto;
-            max-height: 80vh;
+            max-height: 85vh;
         }
 
-        .modal.show .modal-content {
-            opacity: 1;
+        .modal-content h2 {
+            color: var(--color-text-light);
+            font-size: 1.6em;
+            margin-bottom: 16px;
+            font-weight: 600;
         }
 
-        .modalp {
-            margin-bottom: 4px;
-            margin-top: 1px;
-        }
-
-        .close, .delete {
+        .close {
             position: absolute;
-            right: 10px;
-            top: 10px;
+            right: 15px;
+            top: 15px;
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: var(--color-background-dark);
+            background: var(--color-background-darker);
             border: 1px solid var(--color-transparent-accent);
             color: var(--color-text-light);
             display: flex;
@@ -221,420 +627,110 @@
             justify-content: center;
             cursor: pointer;
             font-size: 20px;
-            line-height: 0;
-            transition: background-color 0.2s ease;
+            line-height: 1;
+            transition: background 0.2s;
             padding: 0;
-            opacity: 0.8;
             font-family: Arial, sans-serif;
         }
 
-        .close::after, .delete::after {
-            content: "×";
-            position: relative;
-            top: 1px;
+        .close::after {
+            content: "\00d7";
         }
 
-        .close:hover, .delete:hover {
+        .close:hover {
             background: var(--color-accent);
-            opacity: 1;
         }
 
-        /* Specific positioning for modal close button */
-        .close {
-            right: 15px;
-            top: 15px;
+        .modalp {
+            margin-bottom: 4px;
+            margin-top: 8px;
+            font-size: 0.9em;
+            opacity: 0.8;
         }
 
-        /* Specific positioning for character card delete button */
-        .delete {
-            right: 10px;
-            top: 10px;
-        }
-
-        /* Style modal title */
-        .modal-content h2 {
-            color: var(--color-text-light);
-            font-size: 1.8em;
-            margin-bottom: 20px;
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-        .character {
-            background: linear-gradient(180deg, var(--color-background-light) 0%, var(--color-background-dark) 100%);
-            border-radius: 16px;
-            border: none;
-            box-shadow: 
-                0 2px 4px rgba(0,0,0,0.1),
-                0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 16px;
-            transition: all 0.3s ease;
-            color: var(--color-text-light);
-            position: relative;
-            overflow: hidden;
-            padding: 5px;
-        }
-
-        /* Replace the border-left with a pseudo-element */
-        .character::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 8px;  /* Offset from top */
-            bottom: 8px;  /* Offset from bottom */
-            width: 3px;
-            border-radius: 2px;
-            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
-        }
-
-        /* Adjust the accent colors for each card */
-        .character:nth-child(3n)::after {
-            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
-        }
-
-        .character:nth-child(3n+1)::after {
-            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
-        }
-
-        .character:nth-child(3n+2)::after {
-            background: linear-gradient(to bottom, var(--color-accent-lighter), var(--color-accent));
-        }
-
-        /* Remove the old border styles */
-        .character:nth-child(3n),
-        .character:nth-child(3n+1),
-        .character:nth-child(3n+2) {
-            border-left: none;
-        }
-
-        .character:hover {
-            transform: translateY(-2px) translateX(2px);
-            box-shadow: 
-                0 4px 12px rgba(0,0,0,0.05),
-                0 8px 16px rgba(0,0,0,0.05);
-            background: linear-gradient(180deg, var(--color-background-lighter) 0%, var(--color-background-light) 100%);
-        }
-        .details {
-            display: flex;
-            font-size: 1.15em;
-            padding: 20px 25px;
-            gap: 30px;
-            align-items: flex-start;
-        }
-        .details > div:first-child {
-            flex: 35%;
-        }
-        .details > div:last-child {
-            flex: 65%;
-            padding-right: 40px;
-        }
-        .details p {
-            margin: 6px 0;
-            line-height: 1.6;
-            letter-spacing: 0.2px;
-            color: var(--color-text-light);
-        }
-        .cname {
-            font-size: 1.8em !important;
-            margin-bottom: 12px;
-            color: var(--color-text-light);
-            font-weight: 600;
-            letter-spacing: -0.3px;
-        }
-        h2#chars {
-            border-bottom: none;
-            background-color: transparent;
-            color: var(--color-text-light);
-            font-size: 1.8em;
-            margin: 0;
-            padding: 15px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        h2#chars::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 15px;
-            right: 15px;
-            height: 2px;
-            background: linear-gradient(90deg, 
-                rgba(205, 140, 80, 0) 0%, 
-                rgba(205, 140, 80, 0.5) 50%, 
-                rgba(205, 140, 80, 0) 100%);
-        }
-        /* Left panel styling */
-        div[style*="width: 40%"] {
-            background: linear-gradient(180deg, var(--color-background-dark) 0%, var(--color-background-darker) 100%);
-            box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-            padding: 20px;
-            border-right: 1px solid var(--color-transparent-accent);
-            position: relative;
-            overflow-y: auto;
-            height: 100vh;
-        }
-        /* Add subtle pattern to left panel */
-        div[style*="width: 40%"]::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 200px;
-            background: linear-gradient(135deg, 
-                rgba(66, 153, 225, 0.05) 0%, 
-                rgba(99, 179, 237, 0.05) 100%);
-            border-bottom-right-radius: 50%;
-            border-bottom-left-radius: 50%;
-        }
-        /* Add bottom decoration */
-        div[style*="width: 40%"]::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 150px;
-            background: linear-gradient(135deg, 
-                rgba(66, 153, 225, 0.03) 0%, 
-                rgba(99, 179, 237, 0.03) 100%);
-            border-top-right-radius: 50%;
-            border-top-left-radius: 50%;
-        }
-        /* Form container */
-        #characterForm {
-            position: relative;
-            z-index: 1;
-            background: var(--color-form-background);
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 
-                0 4px 6px rgba(0, 0, 0, 0.05),
-                0 1px 3px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--color-transparent-accent);
-        }
-        h1 {
-            position: relative;
-            z-index: 1;
-            text-align: center;
-            font-size: 2.5em;
-            color: var(--color-text-light);
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-        }
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                rgba(205, 140, 80, 0) 0%, 
-                rgba(205, 140, 80, 0.5) 50%, 
-                rgba(205, 140, 80, 0) 100%);
-        }
-        input[type="text"],
-        input[type="number"],
-        textarea {
-            background: var(--color-transparent-dark);
-            border: 2px solid var(--color-transparent-accent);
-            transition: all 0.3s ease;
-        }
-        input[type="text"]:hover,
-        input[type="number"]:hover,
-        textarea:hover {
-            background: var(--color-transparent-darker);
-            border-color: var(--color-transparent-accent-hover);
-        }
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        textarea:focus {
-            background: #ffffff;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
-        }
-        /* Right panel styling */
-        div[style*="width: 60%"] {
-            background: linear-gradient(135deg, var(--color-background-dark) 0%, var(--color-background-light) 100%);
-            height: 100vh;
-            overflow-y: hidden;
-        }
-        /* Add placeholder color */
-        ::placeholder {
-            color: var(--color-text-light);
-        }
-        /* Style for strong tags */
-        strong {
-            color: var(--color-accent-lighter);
-            font-weight: 600;
-        }
-        input[type="text"]:focus::placeholder,
-        input[type="number"]:focus::placeholder,
-        textarea:focus::placeholder {
-            color: var(--color-placeholder-focus);
-        }
-        #editForm {
-            overflow: visible;
-        }
-        #editNotes {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            border: 2px solid var(--color-transparent-accent);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--color-transparent-dark);
-            color: var(--color-text-filled);
-            resize: vertical;
-            transition: none !important;
-            animation: none !important;
-            will-change: height;
-        }
-
-        #editNotes:hover {
-            background: var(--color-transparent-darker);
-            border-color: var(--color-transparent-accent-hover);
-        }
-
-        #editNotes:focus {
-            background: var(--color-input-focus);
-            color: var(--color-text-dark);
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
-        }
-        #notes {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            border: 2px solid var(--color-transparent-accent);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--color-transparent-dark);
-            color: var(--color-text-dark);
-            resize: vertical;
-            transition: none !important;
-            animation: none !important;
-            will-change: height;
-        }
-
-        #notes:hover {
-            background: var(--color-transparent-darker);
-            border-color: var(--color-transparent-accent-hover);
-        }
-
-        #notes:focus {
-            background: var(--color-input-focus);
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px var(--color-transparent-shadow);
-        }
-
-        /* Add these media queries at the end of your existing styles */
-        @media screen and (max-width: 768px) {
+        /* ── Desktop Layout ── */
+        @media (min-width: 769px) {
             body {
+                flex-direction: row;
+            }
+
+            .sidebar {
+                display: flex;
                 flex-direction: column;
+                width: 340px;
+                height: 100vh;
             }
 
-            div[style*="width: 40%"],
-            div[style*="width: 60%"] {
-                width: 100% !important;
-                float: none;
+            .fab {
+                display: none;
             }
 
-            div[style*="width: 40%"] {
-                min-height: min-content;  /* Ensure content is visible */
-                max-height: 50%;         /* Don't take more than half */
-                overflow-y: auto;
-                border-bottom: 1px solid var(--color-transparent-accent);
-                padding-bottom: 10px;
-            }
-
-            div[style*="width: 60%"] {
-                height: calc(100% - min(50%, 400px)); /* Take remaining space, but ensure form has enough room */
-                overflow-y: hidden;
-                padding-top: 10px;
-            }
-
-            ul {
-                height: calc(100% - 50px);  /* Adjust for header */
-                overflow-y: auto;
-            }
-
-            h2#chars {
-                margin-top: 0;
-            }
-
-            h1 {
-                font-size: 1.5em;  /* Smaller font */
-                margin: 5px 0;     /* Reduced margin */
-            }
-
-            #characterForm {
-                padding: 5px;  /* Reduced padding */
+            #characterList {
+                padding: 16px 24px;
             }
 
             .character {
-                margin: 5px 0;  /* Reduced margin */
+                margin-bottom: 16px;
             }
 
-            .details {
-                padding: 5px;  /* Reduced padding */
-                gap: 5px;      /* Reduced gap */
-                font-size: 1em;  /* Smaller font */
-            }
-
-            input[type="text"],
-            input[type="number"],
-            textarea {
-                padding: 6px;  /* Reduced padding */
-                margin-bottom: 5px;  /* Reduced margin */
-                font-size: 14px;  /* Smaller font */
+            .card-body {
+                padding: 14px 18px 14px 22px;
             }
 
             .cname {
-                font-size: 1.2em !important;  /* Smaller font */
-                margin-bottom: 5px;  /* Reduced margin */
+                font-size: 1.5em;
             }
 
-            #notes, #editNotes {
-                max-height: 60px;  /* Limit textarea height */
+            .hp-display {
+                font-size: 15px;
+                min-width: 90px;
             }
         }
 
-        @media screen and (max-width: 480px) {
-            div[style*="width: 40%"] {
-                max-height: 35vh;  /* Further reduced */
+        /* ── Tiny phones ── */
+        @media (max-width: 380px) {
+            .hp-btn {
+                width: 34px;
+                height: 30px;
+                font-size: 12px;
             }
 
-            div[style*="width: 60%"] {
-                height: 65vh;  /* Increased */
+            .hp-display {
+                font-size: 12px;
+                min-width: 60px;
             }
 
-            ul {
-                height: calc(65vh - 40px);
+            .cname {
+                font-size: 1.1em;
             }
 
-            h1 {
-                font-size: 1.3em;  /* Even smaller font */
+            .turn-btn, .turn-btn-secondary {
+                padding: 6px 10px;
+                font-size: 12px;
             }
 
-            .details {
-                padding: 5px;
-                flex-direction: column;  /* Stack content vertically */
-                gap: 2px;
+            .round-display {
+                font-size: 12px;
             }
 
-            .details > div:first-child,
-            .details > div:last-child {
-                flex: 100%;  /* Take full width */
-                padding-right: 0;
+            .initiative-badge {
+                font-size: 0.75em;
+                padding: 2px 8px;
+            }
+        }
+
+        /* ── Touch devices ── */
+        @media (hover: none) {
+            .delete {
+                opacity: 0.7;
             }
 
-            input[type="submit"] {
-                padding: 8px;  /* Reduced padding */
-                font-size: 14px;  /* Smaller font */
+            * {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .character, .hp-btn, .turn-btn, .turn-btn-secondary, .fab {
+                touch-action: manipulation;
             }
         }
     </style>
@@ -649,207 +745,443 @@
   gtag('config', 'G-8H1008FDQ3');
 </script>
 <body>
-    <div style="width: 40%; float:left; overflow:hidden;">
-        <h1>Character Initiative Tracker</h1>
-        <form id="characterForm">
+    <!-- Sidebar (desktop only) -->
+    <aside class="sidebar" id="sidebar">
+        <h1>Battle Tracker</h1>
+        <form id="characterForm" class="form-container">
             <input type="text" id="name" placeholder="Name" required>
-            <input type="number" id="health" placeholder="Health" required>
-            <input type="number" id="initiative" placeholder="Initiative" required>
-            <textarea id="notes" placeholder="Notes (optional)" rows="3"></textarea>
+            <div class="form-row">
+                <input type="number" id="health" placeholder="HP" required>
+                <input type="number" id="initiative" placeholder="Initiative" required>
+            </div>
+            <textarea id="notes" placeholder="Notes (optional)" rows="2"></textarea>
             <input type="submit" value="Add Character">
         </form>
-     </div>
-     <div style="width: 60%; float:right; overflow:hidden">
-        <h2 id="chars">Character List</h2>
-        <ul id="characterList"></ul>
-     </div>
+        <button id="clearAllBtn">Clear All</button>
+    </aside>
 
-    <div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close"></span>
-        <h2>Edit Character</h2>
-        <form id="editForm">
-            <p class="modalp">Name:</p>
-            <input type="text" id="editName" placeholder="Name" required>
-            <p class="modalp">Health:</p>
-            <input type="number" id="editHealth" placeholder="Health" required>
-            <p class="modalp">Initiative:</p>
-            <input type="number" id="editInitiative" placeholder="Initiative" required>
-            <p class="modalp">Notes:</p>
-            <textarea id="editNotes" placeholder="Notes (optional)" rows="3"></textarea>
-            <input type="submit" value="Save Changes">
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="turn-bar">
+            <button class="turn-btn" id="nextTurnBtn">Next Turn</button>
+            <button class="turn-btn-secondary" id="resetCombatBtn">Reset</button>
+            <span class="round-display" id="roundDisplay">Not in combat</span>
+        </div>
+        <ul id="characterList"></ul>
+    </div>
+
+    <!-- FAB (mobile) -->
+    <button class="fab" id="fab">+</button>
+
+    <!-- Mobile Bottom Sheet -->
+    <div class="mobile-overlay" id="mobileFormOverlay"></div>
+    <div class="bottom-sheet" id="mobileFormSheet">
+        <div class="sheet-handle"></div>
+        <button class="sheet-close" id="mobileFormClose">&times;</button>
+        <h2>Add Character</h2>
+        <form id="mobileCharacterForm">
+            <input type="text" id="mName" placeholder="Name" required>
+            <div class="form-row">
+                <input type="number" id="mHealth" placeholder="HP" required>
+                <input type="number" id="mInitiative" placeholder="Initiative" required>
+            </div>
+            <textarea id="mNotes" placeholder="Notes (optional)" rows="2"></textarea>
+            <input type="submit" value="Add Character">
         </form>
     </div>
-</div>
 
-    <script>
-        var modal = document.getElementById("myModal");
-        var editForm = document.getElementById("editForm");
-        var editNameInput = document.getElementById("editName");
-        var editHealthInput = document.getElementById("editHealth");
-        var editInitiativeInput = document.getElementById("editInitiative");
-        var editNotesInput = document.getElementById("editNotes");
-        var MODAL_TRANSITION_TIME = 100;
-    
-        var span = document.getElementsByClassName("close")[0];
-        span.onclick = function() {
-            modal.classList.remove("show");
-            setTimeout(function() {
-                modal.style.display = "none";
-            }, MODAL_TRANSITION_TIME);
-        }
-
-        // Track where the click started
-        let clickStartedOutsideModal = false;
-
-        window.addEventListener("mousedown", function(event) {
-            clickStartedOutsideModal = event.target === modal;
-        });
-
-        window.addEventListener("click", function(event) {
-            if (event.target === modal && clickStartedOutsideModal) {
-                modal.classList.remove("show");
-                setTimeout(function() {
-                    modal.style.display = "none";
-                }, MODAL_TRANSITION_TIME);
-            }
-        });
-    
-        document.getElementById("characterForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            addCharacter();
-        });
-    
-        function addCharacter() {
-            var name = document.getElementById("name").value;
-            var health = document.getElementById("health").value;
-            var initiative = document.getElementById("initiative").value;
-            var notes = document.getElementById("notes").value;
-
-            var characterList = document.getElementById("characterList");
-
-            var characterDiv = document.createElement("li");
-            characterDiv.classList.add("character", "fade-in");
-
-            characterDiv.innerHTML = `
-                <span class="delete"></span>
-                <div class="details" style="display:flex; font-size:1.15em;">
-                    <div style="flex:50%;">
-                        <h2 class="cname" style="font-size:2.5em; padding-right:5%;">${name}:</h2>
-                        <p><strong class="chealth">Health:</strong> ${health}</p>
-                        <p><strong class="cinitiative">Initiative:</strong> ${initiative}</p>
+    <!-- Edit Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="editModalClose"></span>
+            <h2>Edit Character</h2>
+            <form id="editForm">
+                <p class="modalp">Name:</p>
+                <input type="text" id="editName" placeholder="Name" required>
+                <div class="form-row">
+                    <div>
+                        <p class="modalp">HP:</p>
+                        <input type="number" id="editHealth" placeholder="HP" required>
                     </div>
-                    <div style="flex:50%">
-                        <p><strong class="cnotes">Notes:</strong><br><span style="white-space: pre-wrap;">${notes}</span></p>
+                    <div>
+                        <p class="modalp">Max HP:</p>
+                        <input type="number" id="editMaxHealth" placeholder="Max HP" required>
                     </div>
                 </div>
-            `;
-            
-            characterList.insertBefore(characterDiv, characterList.firstChild);
+                <p class="modalp">Initiative:</p>
+                <input type="number" id="editInitiative" placeholder="Initiative" required>
+                <p class="modalp">Notes:</p>
+                <textarea id="editNotes" placeholder="Notes (optional)" rows="3"></textarea>
+                <input type="submit" value="Save Changes">
+            </form>
+        </div>
+    </div>
 
-            characterDiv.addEventListener("click", function() {
-                openModal(name, health, initiative, notes, characterDiv);
-            });
-            
-            characterDiv.querySelector(".delete").addEventListener("click", function(event) {
-                deleteCharacter(characterDiv, event);
-            });
-            
-            // Clear input fields after adding the character
-            document.getElementById("name").value = "";
-            document.getElementById("health").value = "";
-            document.getElementById("initiative").value = "";
-            document.getElementById("notes").value = "";
+    <script>
+        /* ── Data Model ── */
+        let characters = [];
+        let currentTurnIndex = -1;
+        let currentRound = 0;
+        let nextId = 1;
 
-            sortList();
-            setTimeout(function() {
-                characterDiv.classList.remove("fade-in");
-            }, 300); // Adjust the delay as needed
+        /* ── Persistence ── */
+        function saveState() {
+            try {
+                localStorage.setItem('dnd-tracker', JSON.stringify({
+                    characters,
+                    currentTurnIndex,
+                    currentRound,
+                    nextId
+                }));
+            } catch (e) { /* quota exceeded, silently fail */ }
         }
 
-        function deleteCharacter(characterDiv, event) {
-            // Prevent event bubbling
-            event.stopPropagation();
+        function loadState() {
+            try {
+                const raw = localStorage.getItem('dnd-tracker');
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                characters = data.characters || [];
+                currentTurnIndex = typeof data.currentTurnIndex === 'number' ? data.currentTurnIndex : -1;
+                currentRound = data.currentRound || 0;
+                nextId = data.nextId || 1;
+            } catch (e) {
+                characters = [];
+                currentTurnIndex = -1;
+                currentRound = 0;
+                nextId = 1;
+            }
+        }
 
-            // Set opacity to 0 to trigger fade-out effect
-            characterDiv.classList.add("fade-out");
-            // Remove the characterDiv after the fade-out effect completes
-            characterDiv.addEventListener("animationend", function() {
-                // Remove the characterDiv from the DOM
-                characterDiv.parentNode.removeChild(characterDiv);
+        /* ── Helpers ── */
+        function escapeHtml(str) {
+            return String(str).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function sortCharacters() {
+            characters.sort((a, b) => {
+                if (b.initiative !== a.initiative) return b.initiative - a.initiative;
+                return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
             });
         }
-    
-        function openModal(name, health, initiative, notes, characterDiv) {
-            modal.style.display = "block";
-            setTimeout(function() {
-                modal.classList.add("show");
-            }, MODAL_TRANSITION_TIME);
 
-            // Get all the values first
-            let nameText = characterDiv.querySelector(".cname").textContent.slice(0, -1);
-            let healthText = characterDiv.querySelector(".chealth").nextSibling.textContent.trim();
-            let initiativeText = characterDiv.querySelector(".cinitiative").nextSibling.textContent.trim();
-            let notesText = characterDiv.querySelector(".cnotes").parentElement.querySelector("span").textContent;
-
-            // Set the values with a small delay to ensure modal is ready
-            setTimeout(() => {
-                editNameInput.value = nameText;
-                editHealthInput.value = healthText;
-                editInitiativeInput.value = initiativeText;
-                editNotesInput.value = notesText;
-            }, 0);
-
-            editForm.onsubmit = function(event) {
-                event.preventDefault();
-
-                name = editNameInput.value;
-                health = editHealthInput.value;
-                initiative = editInitiativeInput.value;
-                notes = editNotesInput.value;
-
-                // Update the character's details in the characterDiv
-                characterDiv.querySelector("h2").innerText = name + ":";
-                var details = characterDiv.querySelector(".details");
-                details.querySelectorAll("p")[0].innerHTML = "<strong class='chealth'>Health:</strong> " + health;
-                details.querySelectorAll("p")[1].innerHTML = "<strong class='cinitiative'>Initiative:</strong> " + initiative;
-                details.querySelectorAll("p")[2].innerHTML = "<strong class='cnotes'>Notes:</strong><br><span style='white-space: pre-wrap;'>" + notes + "</span>";
-
-                modal.classList.remove("show");
-                setTimeout(function() {
-                    modal.style.display = "none";
-                }, MODAL_TRANSITION_TIME);
-                sortList();
-            };
+        function hpColor(hp, maxHp) {
+            if (maxHp <= 0) return 'var(--color-hp-danger)';
+            const pct = hp / maxHp;
+            if (pct > 0.5) return 'var(--color-hp-good)';
+            if (pct > 0.25) return 'var(--color-hp-warning)';
+            return 'var(--color-hp-danger)';
         }
 
-        
+        /* ── Character Operations ── */
+        function addCharacter(name, hp, initiative, notes) {
+            const hpNum = parseInt(hp, 10) || 0;
+            const initNum = parseInt(initiative, 10) || 0;
+            characters.push({
+                id: nextId++,
+                name: name.trim(),
+                hp: hpNum,
+                maxHp: hpNum,
+                initiative: initNum,
+                notes: (notes || '').trim()
+            });
+            sortCharacters();
+            saveState();
+            render();
+        }
 
-        function sortList() {
-            var characterList = document.getElementById("characterList");
-            var characters = Array.from(characterList.querySelectorAll('.character'));
+        function deleteCharacter(id) {
+            const idx = characters.findIndex(c => c.id === id);
+            if (idx === -1) return;
 
-            characters.sort(function(a, b) {
-                var initiativeA = parseInt(a.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
-                var initiativeB = parseInt(b.querySelector('.details').querySelectorAll('p')[1].innerText.split(":")[1].trim());
-                
-                // If initiatives are equal, sort by name
-                if (initiativeB === initiativeA) {
-                    var nameA = a.querySelector('.cname').innerText.slice(0, -1).toLowerCase();
-                    var nameB = b.querySelector('.cname').innerText.slice(0, -1).toLowerCase();
-                    return nameA.localeCompare(nameB);
+            if (currentTurnIndex >= 0) {
+                if (idx < currentTurnIndex) {
+                    currentTurnIndex--;
+                } else if (idx === currentTurnIndex) {
+                    // Advance to next; if at end, wrap
+                    if (characters.length <= 1) {
+                        currentTurnIndex = -1;
+                        currentRound = 0;
+                    } else if (idx >= characters.length - 1) {
+                        currentTurnIndex = 0;
+                        currentRound++;
+                    }
+                    // else currentTurnIndex stays the same (next char slides in)
                 }
-                
-                return initiativeB - initiativeA;
-            });
+            }
 
-            characterList.innerHTML = ""; // Clear the list
-
-            characters.forEach(function(character) {
-                characterList.appendChild(character);
-            });
+            characters.splice(idx, 1);
+            if (characters.length === 0) {
+                currentTurnIndex = -1;
+                currentRound = 0;
+            }
+            saveState();
+            render();
         }
+
+        function adjustHp(id, delta) {
+            const ch = characters.find(c => c.id === id);
+            if (!ch) return;
+            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp + delta));
+            saveState();
+            render();
+        }
+
+        function updateCharacter(id, name, hp, maxHp, initiative, notes) {
+            const ch = characters.find(c => c.id === id);
+            if (!ch) return;
+            ch.name = name.trim();
+            ch.hp = parseInt(hp, 10) || 0;
+            ch.maxHp = parseInt(maxHp, 10) || 0;
+            ch.initiative = parseInt(initiative, 10) || 0;
+            ch.notes = (notes || '').trim();
+            // Clamp hp
+            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
+            sortCharacters();
+            saveState();
+            render();
+        }
+
+        /* ── Turn Tracking ── */
+        function nextTurn() {
+            if (characters.length === 0) return;
+            if (currentTurnIndex === -1) {
+                currentTurnIndex = 0;
+                currentRound = 1;
+            } else {
+                currentTurnIndex++;
+                if (currentTurnIndex >= characters.length) {
+                    currentTurnIndex = 0;
+                    currentRound++;
+                }
+            }
+            saveState();
+            render();
+        }
+
+        function resetCombat() {
+            currentTurnIndex = -1;
+            currentRound = 0;
+            saveState();
+            render();
+        }
+
+        function clearAll() {
+            characters = [];
+            currentTurnIndex = -1;
+            currentRound = 0;
+            nextId = 1;
+            saveState();
+            render();
+        }
+
+        /* ── Render ── */
+        function render() {
+            const list = document.getElementById('characterList');
+            const roundEl = document.getElementById('roundDisplay');
+
+            // Round display
+            if (currentTurnIndex === -1 || currentRound === 0) {
+                roundEl.textContent = 'Not in combat';
+            } else {
+                roundEl.textContent = 'Round ' + currentRound;
+            }
+
+            // Build HTML
+            let html = '';
+            characters.forEach((ch, i) => {
+                const isActive = i === currentTurnIndex;
+                const pct = ch.maxHp > 0 ? Math.round((ch.hp / ch.maxHp) * 100) : 0;
+                const color = hpColor(ch.hp, ch.maxHp);
+                const notesHtml = ch.notes
+                    ? '<p class="char-notes">' + escapeHtml(ch.notes) + '</p>'
+                    : '';
+
+                html += '<li class="character fade-in' + (isActive ? ' active-turn' : '') + '">'
+                    + '<button class="delete" data-id="' + ch.id + '"></button>'
+                    + '<div class="card-body" data-id="' + ch.id + '">'
+                    +   '<div class="card-header">'
+                    +     '<h2 class="cname">' + escapeHtml(ch.name) + '</h2>'
+                    +     '<span class="initiative-badge">' + ch.initiative + '</span>'
+                    +   '</div>'
+                    +   '<div class="hp-bar-container"><div class="hp-bar" style="width:' + pct + '%;background:' + color + ';"></div></div>'
+                    +   '<div class="hp-controls">'
+                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-5">-5</button>'
+                    +     '<button class="hp-btn hp-minus" data-id="' + ch.id + '" data-delta="-1">-1</button>'
+                    +     '<span class="hp-display">' + ch.hp + ' / ' + ch.maxHp + '</span>'
+                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="1">+1</button>'
+                    +     '<button class="hp-btn hp-plus" data-id="' + ch.id + '" data-delta="5">+5</button>'
+                    +   '</div>'
+                    +   notesHtml
+                    + '</div>'
+                    + '</li>';
+            });
+
+            list.innerHTML = html;
+        }
+
+        /* ── Edit Modal ── */
+        let editingId = null;
+        const MODAL_TRANSITION_TIME = 150;
+
+        function openEditModal(id) {
+            const ch = characters.find(c => c.id === id);
+            if (!ch) return;
+            editingId = id;
+
+            document.getElementById('editName').value = ch.name;
+            document.getElementById('editHealth').value = ch.hp;
+            document.getElementById('editMaxHealth').value = ch.maxHp;
+            document.getElementById('editInitiative').value = ch.initiative;
+            document.getElementById('editNotes').value = ch.notes;
+
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'block';
+            // Force reflow then add class for transition
+            modal.offsetHeight;
+            modal.classList.add('show');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('myModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, MODAL_TRANSITION_TIME);
+            editingId = null;
+        }
+
+        /* ── Mobile Form ── */
+        function openMobileForm() {
+            document.getElementById('mobileFormOverlay').classList.add('open');
+            document.getElementById('mobileFormSheet').classList.add('open');
+            setTimeout(() => document.getElementById('mName').focus(), 300);
+        }
+
+        function closeMobileForm() {
+            document.getElementById('mobileFormOverlay').classList.remove('open');
+            document.getElementById('mobileFormSheet').classList.remove('open');
+        }
+
+        /* ── Form Submission Helper ── */
+        function handleAddForm(nameEl, hpEl, initEl, notesEl) {
+            const name = nameEl.value.trim();
+            const hp = hpEl.value;
+            const init = initEl.value;
+            const notes = notesEl.value;
+            if (!name) return;
+            addCharacter(name, hp, init, notes);
+            nameEl.value = '';
+            hpEl.value = '';
+            initEl.value = '';
+            notesEl.value = '';
+        }
+
+        /* ── Init ── */
+        function init() {
+            loadState();
+
+            // Event delegation on character list
+            const list = document.getElementById('characterList');
+
+            list.addEventListener('click', function(e) {
+                // HP buttons
+                const hpBtn = e.target.closest('.hp-btn');
+                if (hpBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(hpBtn.dataset.id, 10);
+                    const delta = parseInt(hpBtn.dataset.delta, 10);
+                    adjustHp(id, delta);
+                    return;
+                }
+
+                // Delete button
+                const delBtn = e.target.closest('.delete');
+                if (delBtn) {
+                    e.stopPropagation();
+                    const id = parseInt(delBtn.dataset.id, 10);
+                    const li = delBtn.closest('.character');
+                    li.classList.add('fade-out');
+                    li.addEventListener('animationend', () => deleteCharacter(id));
+                    return;
+                }
+
+                // Card body click => edit modal
+                const cardBody = e.target.closest('.card-body');
+                if (cardBody) {
+                    const id = parseInt(cardBody.dataset.id, 10);
+                    openEditModal(id);
+                    return;
+                }
+            });
+
+            // Desktop form
+            document.getElementById('characterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleAddForm(
+                    document.getElementById('name'),
+                    document.getElementById('health'),
+                    document.getElementById('initiative'),
+                    document.getElementById('notes')
+                );
+            });
+
+            // Mobile form
+            document.getElementById('mobileCharacterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleAddForm(
+                    document.getElementById('mName'),
+                    document.getElementById('mHealth'),
+                    document.getElementById('mInitiative'),
+                    document.getElementById('mNotes')
+                );
+                closeMobileForm();
+            });
+
+            // Turn controls
+            document.getElementById('nextTurnBtn').addEventListener('click', nextTurn);
+            document.getElementById('resetCombatBtn').addEventListener('click', resetCombat);
+            document.getElementById('clearAllBtn').addEventListener('click', function() {
+                if (confirm('Clear all characters?')) clearAll();
+            });
+
+            // FAB
+            document.getElementById('fab').addEventListener('click', openMobileForm);
+            document.getElementById('mobileFormOverlay').addEventListener('click', closeMobileForm);
+            document.getElementById('mobileFormClose').addEventListener('click', closeMobileForm);
+
+            // Edit modal
+            document.getElementById('editModalClose').addEventListener('click', closeEditModal);
+
+            // Backdrop click for modal
+            let modalMouseDownTarget = null;
+            const modal = document.getElementById('myModal');
+            modal.addEventListener('mousedown', function(e) {
+                modalMouseDownTarget = e.target;
+            });
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal && modalMouseDownTarget === modal) {
+                    closeEditModal();
+                }
+            });
+
+            // Edit form submit
+            document.getElementById('editForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (editingId === null) return;
+                updateCharacter(
+                    editingId,
+                    document.getElementById('editName').value,
+                    document.getElementById('editHealth').value,
+                    document.getElementById('editMaxHealth').value,
+                    document.getElementById('editInitiative').value,
+                    document.getElementById('editNotes').value
+                );
+                closeEditModal();
+            });
+
+            render();
+        }
+
+        init();
     </script>
-    
 </body>
 </html>
