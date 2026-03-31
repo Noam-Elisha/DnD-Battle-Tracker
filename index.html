@@ -864,7 +864,7 @@
         <form id="characterForm" class="form-container">
             <input type="text" id="name" placeholder="Name" required>
             <div class="form-row">
-                <input type="number" id="health" placeholder="HP" required>
+                <input type="number" id="health" placeholder="HP">
                 <input type="number" id="initiative" placeholder="Initiative" required>
             </div>
             <textarea id="notes" placeholder="Notes (optional)" rows="2"></textarea>
@@ -895,7 +895,7 @@
         <form id="mobileCharacterForm">
             <input type="text" id="mName" placeholder="Name" required>
             <div class="form-row">
-                <input type="number" id="mHealth" placeholder="HP" required>
+                <input type="number" id="mHealth" placeholder="HP">
                 <input type="number" id="mInitiative" placeholder="Initiative" required>
             </div>
             <textarea id="mNotes" placeholder="Notes (optional)" rows="2"></textarea>
@@ -962,7 +962,8 @@
 
         /* ── Character Operations ── */
         function addCharacter(name, hp, initiative, notes) {
-            const hpNum = parseInt(hp, 10) || 0;
+            const hpStr = String(hp).trim();
+            const hpNum = hpStr === '' ? null : (parseInt(hp, 10) || 0);
             const initNum = parseInt(initiative, 10) || 0;
             const id = nextId++;
             characters.push({
@@ -1011,7 +1012,7 @@
         function adjustHp(id, delta) {
             commitAllEdits();
             const ch = characters.find(c => c.id === id);
-            if (!ch || ch.isDead || ch.isDown) return;
+            if (!ch || ch.maxHp === null || ch.isDead || ch.isDown) return;
             ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp + delta));
             saveState();
             render();
@@ -1020,7 +1021,7 @@
         function markDown(id) {
             commitAllEdits();
             const ch = characters.find(c => c.id === id);
-            if (!ch || ch.isDead) return;
+            if (!ch || ch.maxHp === null || ch.isDead) return;
             ch.isDown = true;
             ch.hp = 0;
             ch.deathSaves = [];
@@ -1062,12 +1063,18 @@
             const ch = characters.find(c => c.id === id);
             if (!ch) return;
             ch.name = name.trim();
-            ch.hp = parseInt(hp, 10) || 0;
-            ch.maxHp = parseInt(maxHp, 10) || 0;
             ch.initiative = parseInt(initiative, 10) || 0;
             ch.notes = (notes || '').trim();
-            // Clamp hp
-            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
+            var hpStr = String(hp).trim();
+            var maxHpStr = String(maxHp).trim();
+            if (hpStr === '' && maxHpStr === '') {
+                ch.hp = null;
+                ch.maxHp = null;
+            } else {
+                ch.hp = parseInt(hp, 10) || 0;
+                ch.maxHp = parseInt(maxHp, 10) || 0;
+                ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
+            }
             sortCharacters();
             saveState();
             render();
@@ -1141,7 +1148,9 @@
 
                 // Build middle section based on state
                 var middleHtml = '';
-                if (ch.isDead) {
+                if (ch.maxHp === null) {
+                    // No HP tracking — skip HP bar, controls, death saves
+                } else if (ch.isDead) {
                     middleHtml = '<div class="dead-overlay">'
                         + '<span class="dead-text">Dead</span>'
                         + '<button class="revive-btn" data-id="' + ch.id + '">Revive</button>'
@@ -1188,7 +1197,7 @@
                     + '<div class="card-body" data-id="' + ch.id + '">'
                     +   '<div class="card-header">'
                     +     '<h2 class="cname">' + escapeHtml(ch.name) + '</h2>'
-                    +     '<span class="hp-display">' + ch.hp + '/' + ch.maxHp + '</span>'
+                    +     (ch.maxHp !== null ? '<span class="hp-display">' + ch.hp + '/' + ch.maxHp + '</span>' : '')
                     +     '<span class="initiative-badge">' + ch.initiative + '</span>'
                     +   '</div>'
                     +   middleHtml
@@ -1200,8 +1209,8 @@
                     +       '<p class="edit-label">Name</p>'
                     +       '<input type="text" class="edit-name" value="' + escapeHtml(ch.name) + '" data-id="' + ch.id + '">'
                     +       '<div class="edit-row">'
-                    +         '<div><p class="edit-label">HP</p><input type="number" class="edit-hp" value="' + ch.hp + '" data-id="' + ch.id + '"></div>'
-                    +         '<div><p class="edit-label">Max HP</p><input type="number" class="edit-maxhp" value="' + ch.maxHp + '" data-id="' + ch.id + '"></div>'
+                    +         '<div><p class="edit-label">HP</p><input type="number" class="edit-hp" value="' + (ch.hp !== null ? ch.hp : '') + '" data-id="' + ch.id + '"></div>'
+                    +         '<div><p class="edit-label">Max HP</p><input type="number" class="edit-maxhp" value="' + (ch.maxHp !== null ? ch.maxHp : '') + '" data-id="' + ch.id + '"></div>'
                     +         '<div><p class="edit-label">Initiative</p><input type="number" class="edit-init" value="' + ch.initiative + '" data-id="' + ch.id + '"></div>'
                     +       '</div>'
                     +     '</div>'
@@ -1230,16 +1239,26 @@
             const ch = characters.find(c => c.id === id);
             if (!ch) return;
             ch.name = section.querySelector('.edit-name').value.trim() || ch.name;
-            ch.hp = parseInt(section.querySelector('.edit-hp').value, 10) || 0;
-            ch.maxHp = parseInt(section.querySelector('.edit-maxhp').value, 10) || 0;
             ch.initiative = parseInt(section.querySelector('.edit-init').value, 10) || 0;
             ch.notes = (section.querySelector('.edit-notes').value || '').trim();
-            ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
-            // Revive if HP set positive while dead/down
-            if (ch.hp > 0 && (ch.isDead || ch.isDown)) {
+            var hpVal = section.querySelector('.edit-hp').value.trim();
+            var maxHpVal = section.querySelector('.edit-maxhp').value.trim();
+            if (hpVal === '' && maxHpVal === '') {
+                ch.hp = null;
+                ch.maxHp = null;
                 ch.isDead = false;
                 ch.isDown = false;
                 ch.deathSaves = [];
+            } else {
+                ch.hp = parseInt(hpVal, 10) || 0;
+                ch.maxHp = parseInt(maxHpVal, 10) || 0;
+                ch.hp = Math.max(0, Math.min(ch.maxHp, ch.hp));
+                // Revive if HP set positive while dead/down
+                if (ch.hp > 0 && (ch.isDead || ch.isDown)) {
+                    ch.isDead = false;
+                    ch.isDown = false;
+                    ch.deathSaves = [];
+                }
             }
             const ta = section.querySelector('.edit-notes');
             if (ta && ta.style.height) {
@@ -1381,16 +1400,26 @@
                 if (!card) return;
                 const section = card.querySelector('.edit-section');
                 if (!section) return;
-                const hp = parseInt(section.querySelector('.edit-hp').value, 10) || 0;
-                const maxHp = parseInt(section.querySelector('.edit-maxhp').value, 10) || 0;
-                // Live-update HP display
+                const hpStr = section.querySelector('.edit-hp').value.trim();
+                const maxHpStr = section.querySelector('.edit-maxhp').value.trim();
                 const hpDisplay = card.querySelector('.hp-display');
-                if (hpDisplay) hpDisplay.textContent = hp + '/' + maxHp;
-                // Revive immediately if HP set positive while dead/down
-                const ch = characters.find(c => c.id === id);
-                if (ch && hp > 0 && (ch.isDead || ch.isDown)) {
-                    commitEdit(id);
-                    render();
+                if (hpStr === '' && maxHpStr === '') {
+                    // No HP tracking — hide display if present
+                    if (hpDisplay) hpDisplay.style.display = 'none';
+                } else {
+                    const hp = parseInt(hpStr, 10) || 0;
+                    const maxHp = parseInt(maxHpStr, 10) || 0;
+                    // Live-update HP display
+                    if (hpDisplay) {
+                        hpDisplay.textContent = hp + '/' + maxHp;
+                        hpDisplay.style.display = '';
+                    }
+                    // Revive immediately if HP set positive while dead/down
+                    const ch = characters.find(c => c.id === id);
+                    if (ch && hp > 0 && (ch.isDead || ch.isDown)) {
+                        commitEdit(id);
+                        render();
+                    }
                 }
             });
 
